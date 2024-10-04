@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Extension Popup</title>
+  <link rel="stylesheet" href="../src/assets/styles.css"> <!-- Assurez-vous que ce chemin est correct -->
+</head>
+<body>
+  <div id="app">
+    <div class="header">
+      <h1>Saved URLs</h1>
+      <button id="add-url-btn" class="add-btn">+</button> <!-- Bouton pour ajouter des URLs -->
+    </div>
+
+    <div id="url-form" class="hidden"> <!-- Formulaire caché par défaut -->
+      <input type="text" id="url-name" placeholder="Enter URL Name">
+      <input type="text" id="url-category" placeholder="Enter Category">
+      <button id="save-url">Save URL</button>
+    </div>
+
+    <div id="category-list"></div>
+    <button id="export-btn">Export JSON</button>
+    <button id="import-btn">Import JSON</button>
+  </div>
+
+  <script src="../src/popup.js"></script> <!-- Vérifiez que ce chemin est correct -->
+</body>
+</html>
