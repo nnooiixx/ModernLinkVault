@@ -20,6 +20,7 @@
 - **Organisation** : Classez vos URL par catégories pour un accès rapide.
 - **Recherche rapide** : Trouvez vos URL en quelques clics grâce à la fonction de recherche intégrée.
 - **Interface utilisateur intuitive** : Conçue pour être conviviale et accessible.
+- **Import/Export** : Téléchargez ou importez votre fichier .JSON contenant vos liens sauvegardés.
 
 ## Technologies utilisées
 
