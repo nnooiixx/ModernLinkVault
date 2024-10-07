@@ -1,77 +1,79 @@
-URL Saver
 
-URL Saver est une application simple et efficace qui vous permet de sauvegarder, organiser et gérer vos liens URL préférés en un seul endroit. Que ce soit pour des articles, des vidéos ou des ressources, URL Saver facilite l'accès à toutes vos URL importantes.
-Table des matières
+# URL Saver
 
-    Fonctionnalités
-    Technologies utilisées
-    Installation
-    Utilisation
-    Contribuer
-    Licence
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
 
-Fonctionnalités
+**URL Saver** est une application simple et efficace qui vous permet de sauvegarder, organiser et gérer vos liens URL préférés en un seul endroit. Que ce soit pour des articles, des vidéos ou des ressources, URL Saver facilite l'accès à toutes vos URL importantes.
 
-    Sauvegarde des URL : Ajoutez facilement des liens URL.
-    Organisation : Classez vos URL par catégories pour un accès rapide.
-    Recherche rapide : Trouvez vos URL en quelques clics grâce à la fonction de recherche intégrée.
-    Interface utilisateur intuitive : Conçue pour être conviviale et accessible.
+## Table des matières
 
-Technologies utilisées
+- [Fonctionnalités](#fonctionnalités)
+- [Technologies utilisées](#technologies-utilisées)
+- [Installation](#installation)
+- [Utilisation](#utilisation)
+- [Contribuer](#contribuer)
+- [Licence](#licence)
 
-    HTML5
-    CSS3
-    JavaScript
-    Node.js
-    Express.js
+## Fonctionnalités
 
-Installation
+- **Sauvegarde des URL** : Ajoutez facilement des liens URL.
+- **Organisation** : Classez vos URL par catégories pour un accès rapide.
+- **Recherche rapide** : Trouvez vos URL en quelques clics grâce à la fonction de recherche intégrée.
+- **Interface utilisateur intuitive** : Conçue pour être conviviale et accessible.
 
-Pour installer URL Saver sur votre machine, suivez les étapes ci-dessous :
+## Technologies utilisées
 
-    Clonez le repository :
+- [HTML5](https://html.spec.whatwg.org/)
+- [CSS3](https://www.w3.org/Style/CSS/Overview.en.html)
+- [JavaScript](https://www.javascript.com/)
+- [Node.js](https://nodejs.org/)
+- [Express.js](https://expressjs.com/)
 
-    bash
+## Installation
 
-git clone https://github.com/nnooiixx/url-saver.git
+Pour installer **URL Saver** sur votre machine, suivez les étapes ci-dessous :
 
-Accédez au dossier du projet :
+1. Clonez le repository :
+   ```bash
+   git clone https://github.com/nnooiixx/url-saver.git
+   ```
+   
+2. Accédez au dossier du projet :
+   ```bash
+   cd url-saver
+   ```
 
-bash
+3. Installez les dépendances :
+   ```bash
+   npm install
+   ```
 
-cd url-saver
+4. Lancez l'application :
+   ```bash
+   npm start
+   ```
 
-Installez les dépendances :
+Votre application devrait maintenant être en cours d'exécution sur `http://localhost:3000`.
 
-bash
+## Utilisation
 
-npm install
+1. Ouvrez votre navigateur et allez à l'adresse `http://localhost:3000`.
+2. Utilisez le formulaire pour ajouter de nouvelles URL.
+3. Organisez vos liens par catégories et utilisez la fonction de recherche pour retrouver rapidement vos liens.
 
-Lancez l'application :
-
-bash
-
-    npm start
-
-Votre application devrait maintenant être en cours d'exécution sur http://localhost:3000.
-Utilisation
-
-    Ouvrez votre navigateur et allez à l'adresse http://localhost:3000.
-    Utilisez le formulaire pour ajouter de nouvelles URL.
-    Organisez vos liens par catégories et utilisez la fonction de recherche pour retrouver rapidement vos liens.
-
-Contribuer
+## Contribuer
 
 Les contributions sont les bienvenues ! Si vous souhaitez contribuer à ce projet, veuillez suivre ces étapes :
 
-    Forkez le projet.
-    Créez votre branche (git checkout -b feature/nouvelle-fonctionnalité).
-    Commitez vos modifications (git commit -m 'Ajout d'une nouvelle fonctionnalité').
-    Poussez votre branche (git push origin feature/nouvelle-fonctionnalité).
-    Ouvrez une Pull Request.
+1. Forkez le projet.
+2. Créez votre branche (`git checkout -b feature/nouvelle-fonctionnalité`).
+3. Commitez vos modifications (`git commit -m 'Ajout d'une nouvelle fonctionnalité'`).
+4. Poussez votre branche (`git push origin feature/nouvelle-fonctionnalité`).
+5. Ouvrez une Pull Request.
 
-Licence
+## Licence
 
-Ce projet est sous licence MIT. Consultez le fichier LICENSE pour plus de détails.
+Ce projet est sous licence MIT. Consultez le fichier [LICENSE](LICENSE) pour plus de détails.
+
 
 node_modules/.bin/tsc
