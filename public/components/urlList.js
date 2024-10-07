@@ -17,7 +17,7 @@ export function addUrl(urlName, category, url) {
             data[category] = [];
         }
         data[category].push({ name: urlName, url });
-        yield saveToStorage(data); // Ensure we await storage operations
+        yield saveToStorage(data);
     });
 }
 // Delete a URL by name in a category
@@ -28,12 +28,13 @@ export function deleteUrl(category, urlName) {
         yield saveToStorage(data);
     });
 }
-// Get all categories sorted alphabetically
+// Get all sorted categories alphabetically, ensuring no duplicates
 export function getSortedCategories() {
     return __awaiter(this, void 0, void 0, function* () {
         const data = yield getFromStorage();
-        const categories = Object.keys(data);
-        return sortAlphabetically(categories);
+        const categories = Object.keys(data).filter(category => category && category.trim() !== ""); // Filter empty categories
+        const uniqueCategories = Array.from(new Set(categories)); // Remove duplicates
+        return sortAlphabetically(uniqueCategories);
     });
 }
 // Get all URLs within a category
@@ -43,26 +44,34 @@ export function getUrlsInCategory(category) {
         return data[category] || [];
     });
 }
-// Move a URL from one position to another within a category (for drag-and-drop)
+// Move a URL from one position to another within a category
 export function moveUrl(category, fromIndex, toIndex) {
     return __awaiter(this, void 0, void 0, function* () {
-        const urls = yield getUrlsInCategory(category); // Ensure we await the result
+        const urls = yield getUrlsInCategory(category);
         if (fromIndex >= 0 && toIndex >= 0 && fromIndex < urls.length && toIndex < urls.length) {
             const [movedUrl] = urls.splice(fromIndex, 1); // Remove the URL from the old position
             urls.splice(toIndex, 0, movedUrl); // Insert the URL at the new position
             const data = yield getFromStorage();
             data[category] = urls;
-            yield saveToStorage(data); // Save the updated array with the reordered URLs
+            yield saveToStorage(data);
         }
     });
 }
 // Delete a URL by index in a category
 export function deleteUrlByIndex(category, index) {
     return __awaiter(this, void 0, void 0, function* () {
-        const urls = yield getUrlsInCategory(category); // Ensure we await the result
-        urls.splice(index, 1); // Remove the URL from the array
+        const urls = yield getUrlsInCategory(category);
+        urls.splice(index, 1);
         const data = yield getFromStorage();
         data[category] = urls;
+        yield saveToStorage(data);
+    });
+}
+// Delete an entire category and its URLs
+export function deleteCategory(category) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const data = yield getFromStorage();
+        delete data[category]; // Remove the entire category
         yield saveToStorage(data);
     });
 }
