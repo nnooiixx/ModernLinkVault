@@ -49,18 +49,11 @@ Pour installer **URL Saver** sur votre machine, suivez les étapes ci-dessous :
    npm install
    ```
 
-4. Lancez l'application :
-   ```bash
-   npm start
-   ```
-
-Votre application devrait maintenant être en cours d'exécution sur `http://localhost:3000`.
 
 ## Utilisation
 
-1. Ouvrez votre navigateur et allez à l'adresse `http://localhost:3000`.
-2. Utilisez le formulaire pour ajouter de nouvelles URL.
-3. Organisez vos liens par catégories et utilisez la fonction de recherche pour retrouver rapidement vos liens.
+1. Utilisez le formulaire pour ajouter de nouvelles URL.
+2. Organisez vos liens par catégories et utilisez la fonction de recherche pour retrouver rapidement vos liens.
 
 ## Contribuer
 
