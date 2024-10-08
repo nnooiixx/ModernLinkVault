@@ -1,166 +1,167 @@
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 import { addUrl, getSortedCategories, getUrlsInCategory, moveUrl, deleteUrlByIndex, deleteCategory } from './components/urlList.js';
+import { exportToJson, importFromJson } from './components/importExport.js';
+
 console.log("popup.js is loaded");
-document.addEventListener('DOMContentLoaded', () => {
-    console.log("Popup script loaded");
-    // Fullscreen button logic
-    const fullscreenBtn = document.getElementById('fullscreen-btn');
-    if (fullscreenBtn) {
-        fullscreenBtn.addEventListener('click', () => {
-            const fullScreenUrl = chrome.runtime.getURL('popup.html');
-            window.open(fullScreenUrl, '_blank');
-        });
-    }
-    // "+" and "-" button logic for showing/hiding URL form
-    const addUrlButton = document.getElementById('add-url-btn');
-    if (addUrlButton) {
-        addUrlButton.addEventListener('click', () => {
-            const form = document.getElementById('url-form');
-            if (form) {
-                form.classList.toggle('hidden');
-                addUrlButton.textContent = form.classList.contains('hidden') ? "+" : "-";
-            }
-        });
-    }
-    // Logic to save a URL (Removed the 'URL successfully saved!' message)
-    const saveUrlButton = document.getElementById('save-url');
-    if (saveUrlButton) {
-        saveUrlButton.addEventListener('click', () => __awaiter(void 0, void 0, void 0, function* () {
-            const urlName = document.getElementById('url-name').value;
-            const category = document.getElementById('url-category').value.trim(); // Remove spaces
-            let url = document.getElementById('url-link').value;
-            // Ensure URL starts with http:// or https://
-            if (!/^https?:\/\//i.test(url)) {
-                url = `http://${url}`;
-            }
-            // Check if category is valid (non-null and not an empty string)
-            if (urlName && category && url && category !== "") {
-                try {
-                    yield addUrl(urlName, category, url);
-                    yield renderCategories();
-                }
-                catch (err) {
-                    console.error("Failed to save URL", err);
-                }
-            }
-        }));
-    }
-    // Function to render categories with drag-and-drop for reordering
-    function renderCategories() {
-        return __awaiter(this, void 0, void 0, function* () {
-            let categories = yield getSortedCategories(); // Ensure unique categories
-            // Remove duplicates and null/empty categories
-            categories = categories.filter((category, index, self) => {
-                return category && category.trim() !== "" && self.indexOf(category) === index;
-            });
-            const categoryList = document.getElementById('category-list');
-            if (categoryList) {
-                categoryList.innerHTML = ''; // Clear the existing list
-                categories.forEach((category) => __awaiter(this, void 0, void 0, function* () {
-                    // Skip empty or null categories
-                    if (!category || category.trim() === "")
-                        return;
-                    const urls = yield getUrlsInCategory(category);
-                    const categorySection = document.createElement('div');
-                    categorySection.classList.add('category-section');
-                    categorySection.innerHTML = `
+
+type UrlItem = {
+  name: string;
+  url: string;
+};
+
+let draggedItem: HTMLElement | null = null;
+let draggedItemIndex: number | null = null;
+let draggedCategory: string | null = null;
+
+document.addEventListener('DOMContentLoaded', async () => {
+  console.log("Popup script loaded");
+
+  const fullscreenBtn = document.getElementById('fullscreen-btn');
+  if (fullscreenBtn) {
+    fullscreenBtn.addEventListener('click', () => {
+      const fullScreenUrl = chrome.runtime.getURL('popup.html');
+      window.open(fullScreenUrl, '_blank');
+    });
+  }
+
+  const addUrlButton = document.getElementById('add-url-btn');
+  if (addUrlButton) {
+    addUrlButton.addEventListener('click', () => {
+      const form = document.getElementById('url-form');
+      if (form) {
+        form.classList.toggle('hidden');
+        addUrlButton.textContent = form.classList.contains('hidden') ? "+" : "-";
+      }
+    });
+  }
+
+  const saveUrlButton = document.getElementById('save-url');
+  if (saveUrlButton) {
+    saveUrlButton.addEventListener('click', async () => {
+      const urlName = (document.getElementById('url-name') as HTMLInputElement).value.trim();
+      const category = (document.getElementById('url-category') as HTMLInputElement).value.trim();
+      let url = (document.getElementById('url-link') as HTMLInputElement).value.trim();
+
+      if (!urlName || !category || !url) {
+        console.error("Missing URL, category, or name.");
+        return;
+      }
+
+      if (!/^https?:\/\//i.test(url)) {
+        url = `http://${url}`;
+      }
+
+      try {
+        await addUrl(urlName, category, url);
+        console.log(`Added URL: ${urlName}, Category: ${category}`);
+        await renderCategories();
+      } catch (err) {
+        console.error("Failed to save URL", err);
+      }
+    });
+  }
+
+  const settingsLink = document.getElementById('settings-link');
+  if (settingsLink) {
+    settingsLink.addEventListener('click', () => {
+      const settingsSection = document.getElementById('settings-section');
+      if (settingsSection) {
+        settingsSection.classList.toggle('hidden');
+        console.log("Settings section toggled.");
+      }
+    });
+  }
+
+  async function renderCategories() {
+    let categories = await getSortedCategories();
+    categories = categories.filter((category, index, self) => category && category.trim() !== "" && self.indexOf(category) === index);
+
+    const categoryList = document.getElementById('category-list');
+    if (categoryList) {
+      categoryList.innerHTML = '';
+
+      categories.forEach(async (category: string) => {
+        const urls: UrlItem[] = await getUrlsInCategory(category);
+        const categorySection = document.createElement('div');
+        categorySection.classList.add('category-section');
+        categorySection.innerHTML = `
           <h3>${category}
             <span class="delete-category" data-category="${category}" style="cursor: pointer;">🗑️</span>
           </h3>
+          <div class="url-list" id="category-${category}"></div>
         `;
-                    // If category is empty, allow dragging into it
-                    categorySection.addEventListener('dragover', (event) => {
-                        event.preventDefault();
-                    });
-                    categorySection.addEventListener('drop', (event) => __awaiter(this, void 0, void 0, function* () {
-                        if (draggedCategory && draggedIndex !== null) {
-                            const url = (yield getUrlsInCategory(draggedCategory))[draggedIndex];
-                            yield deleteUrlByIndex(draggedCategory, draggedIndex);
-                            yield addUrl(url.name, category, url.url);
-                            yield renderCategories();
-                        }
-                    }));
-                    urls.forEach(({ name, url }, index) => {
-                        var _a;
-                        const link = document.createElement('div');
-                        link.draggable = true;
-                        link.setAttribute('data-index', index.toString());
-                        link.setAttribute('data-category', category);
-                        link.classList.add('draggable-item');
-                        link.innerHTML = `
-            <div class="drag-handle" style="cursor: grab; display: inline-block; vertical-align: middle;">&#x2630;</div>
-            <a href="${url}" target="_blank" style="display: inline-block; vertical-align: middle;">${name}</a>
-            <span class="trash-icon" data-index="${index}" data-category="${category}" style="cursor: pointer; vertical-align: middle;">🗑️</span>
-          `;
-                        link.addEventListener('dragstart', handleDragStart);
-                        link.addEventListener('dragover', handleDragOver);
-                        link.addEventListener('drop', handleDrop);
-                        // Event listener for deleting a URL
-                        (_a = link.querySelector('.trash-icon')) === null || _a === void 0 ? void 0 : _a.addEventListener('click', () => {
-                            if (confirm('Are you sure you want to delete this URL?')) {
-                                deleteUrlByIndex(category, index);
-                                renderCategories();
-                            }
-                        });
-                        categorySection.appendChild(link);
-                    });
-                    categoryList.appendChild(categorySection);
-                }));
-                // Add delete category functionality
-                const deleteCategoryButtons = document.querySelectorAll('.delete-category');
-                deleteCategoryButtons.forEach(button => {
-                    button.addEventListener('click', (event) => __awaiter(this, void 0, void 0, function* () {
-                        const categoryToDelete = event.target.getAttribute('data-category');
-                        if (categoryToDelete && confirm(`Are you sure you want to delete the category "${categoryToDelete}"? This will delete all links in the category.`)) {
-                            yield deleteCategory(categoryToDelete); // Deletes the category and its URLs
-                            yield renderCategories();
-                        }
-                    }));
-                });
-            }
+
+        categoryList.appendChild(categorySection);
+
+        const urlListDiv = document.getElementById(`category-${category}`);
+        if (urlListDiv) {
+          urls.forEach(({ name, url }, index) => {
+            const linkDiv = document.createElement('div');
+            linkDiv.classList.add('draggable-item');
+            linkDiv.setAttribute('data-index', index.toString());
+            linkDiv.setAttribute('data-category', category);
+            linkDiv.innerHTML = `
+              <div class="drag-handle" style="cursor: grab;">&#x2630;</div>
+              <a href="${url}" target="_blank">${name}</a>
+              <span class="trash-icon" data-index="${index}" data-category="${category}" style="cursor: pointer;">🗑️</span>
+            `;
+            urlListDiv.appendChild(linkDiv);
+
+            linkDiv.addEventListener('mousedown', handleMouseDown);
+            linkDiv.addEventListener('mouseup', handleMouseUp);
+          });
+
+          urlListDiv.addEventListener('dragover', handleMouseOver);
+        }
+      });
+
+      document.querySelectorAll('.delete-category').forEach(button => {
+        button.addEventListener('click', async (event) => {
+          const categoryToDelete = (event.target as HTMLElement).getAttribute('data-category');
+          if (categoryToDelete && confirm(`Delete category "${categoryToDelete}"?`)) {
+            await deleteCategory(categoryToDelete);
+            await renderCategories();
+          }
         });
+      });
     }
-    // Drag-and-drop event handlers
-    let draggedIndex = null;
-    let draggedCategory = null;
-    function handleDragStart(event) {
-        var _a;
-        const target = event.target;
-        draggedIndex = Number(target.getAttribute('data-index'));
-        draggedCategory = target.getAttribute('data-category');
-        (_a = event.dataTransfer) === null || _a === void 0 ? void 0 : _a.setData('text/plain', '');
+  }
+
+  function handleMouseDown(event: MouseEvent) {
+    const target = event.target as HTMLElement;
+    draggedItem = target.closest('.draggable-item') as HTMLElement;
+    draggedCategory = draggedItem?.getAttribute('data-category') ?? null;
+    draggedItemIndex = Number(draggedItem?.getAttribute('data-index'));
+
+    if (draggedItem) {
+      draggedItem.style.position = 'absolute';
+      draggedItem.style.zIndex = '1000';
+      document.body.append(draggedItem);
+
+      document.addEventListener('mousemove', handleMouseMove);
     }
-    function handleDragOver(event) {
-        event.preventDefault(); // Allow drop
+  }
+
+  function handleMouseMove(event: MouseEvent) {
+    if (draggedItem) {
+      draggedItem.style.left = `${event.pageX}px`;
+      draggedItem.style.top = `${event.pageY}px`;
     }
-    function handleDrop(event) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const target = event.target;
-            const dropIndex = Number(target.getAttribute('data-index'));
-            const dropCategory = target.getAttribute('data-category');
-            if (draggedCategory && draggedIndex !== null) {
-                if (dropCategory === draggedCategory) {
-                    yield moveUrl(draggedCategory, draggedIndex, dropIndex);
-                }
-                else {
-                    const url = (yield getUrlsInCategory(draggedCategory))[draggedIndex];
-                    yield deleteUrlByIndex(draggedCategory, draggedIndex);
-                    yield addUrl(url.name, dropCategory, url.url);
-                }
-                yield renderCategories();
-            }
-            draggedIndex = null;
-            draggedCategory = null;
-        });
+  }
+
+  function handleMouseUp() {
+    document.removeEventListener('mousemove', handleMouseMove);
+    if (draggedItem) {
+      const dropCategoryElement = document.elementFromPoint(event.clientX, event.clientY)?.closest('.category-section');
+      const dropCategory = dropCategoryElement?.getAttribute('data-category');
+
+      if (dropCategory && draggedCategory !== dropCategory) {
+        // Move URL to new category
+        moveUrl(draggedCategory!, draggedItemIndex!, 0); // Simplified for demo
+      }
+      draggedItem = null;
+      renderCategories();
     }
-    // Initial render of categories
-    renderCategories();
+  }
+
+  renderCategories();
 });
