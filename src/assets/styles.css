@@ -1,6 +1,7 @@
+/* General layout */
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  background-color: #1d1d1d;
+  background-color: #0d1117;
   color: #fff;
   margin: 0;
   padding: 20px;
@@ -43,6 +44,7 @@ h1 {
   transform: scale(1.1);
 }
 
+/* Form and button styling */
 #url-form {
   margin-top: 20px;
 }
@@ -76,8 +78,34 @@ button:hover {
   background-color: #777;
 }
 
+/* Search Input Styling */
+#search-container {
+  margin-bottom: 15px;
+}
+
+#search-input {
+  width: 75%;
+  padding: 8px;
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+  background-color: #0d1117;
+  font-size: 16px;
+  color: #c9d1d9;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.075);
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  line-height: 1.25; /* Matches GitHub styling */
+}
+
+/* Search input focus styling */
+#search-input:focus {
+  border-color: #1f6feb;
+  box-shadow: 0 0 0 3px rgba(31, 111, 235, 0.3); /* Blue outline on focus */
+  outline: none;
+}
+
+/* Link List Styling */
 #category-list {
-  margin-top: 20px;
+  margin-top: 0px;
   width: 100%;
 }
 
@@ -110,6 +138,7 @@ button:hover {
   margin-top: 20px;
 }
 
+/* Fullscreen button at the bottom */
 .fullscreen-btn {
   position: fixed;
   bottom: 10px;
@@ -129,17 +158,22 @@ button:hover {
   transform: scale(1.1);
 }
 
+/* Styling for the settings link */
 .settings-text {
-  font-size: 14px; /* Ajuster la taille de la police */
-  color: #fff; /* Couleur blanche */
-  text-decoration: none; /* Pas de soulignement par défaut */
-  cursor: pointer; /* Curseur en forme de main */
+  font-size: 14px;
+  color: #fff;
+  text-decoration: none;
+  cursor: pointer;
+  position: fixed; /* Make it stick to the bottom */
+  bottom: 10px; /* Adjust as necessary for spacing */
+  left: 20px; /* Align with other content on the left */
 }
 
 .settings-text:hover {
-  text-decoration: underline; /* Soulignement au survol */
+  text-decoration: underline;
 }
 
+/* URL and Arrow Styling */
 .link-item {
   display: flex;
   align-items: center;
@@ -165,9 +199,148 @@ button:hover {
   font-size: 16px;
 }
 
-.arrow-icon {
+.url-item-content {
+  display: flex;
+  align-items: center;
+  padding: 3px 0;
+  margin-bottom: -5px; /* Reduced space between URL items */
+}
+
+.arrow-container {
+  display: flex;
+  flex-direction: row; /* Align arrows horizontally */
+  justify-content: center;
+  align-items: center; /* Ensure arrows are centered vertically */
+  margin-right: 8px; /* Maintain space between arrows and the link */
+}
+
+/* New arrow icons using ↑ and ↓ */
+.up-arrow, .down-arrow {
+  cursor: pointer;
+  font-size: 16px;
+  color: #1f6feb;
+  font-weight: bold; /* Makes the arrows appear thicker */
+  margin-left: 5px; /* Add some spacing between the two arrows */
+  transition: color 0.3s;
+}
+
+.up-arrow::before {
+  content: "↑"; /* Up arrow icon */
+  font-weight: bold;
+}
+
+.down-arrow::before {
+  content: "↓"; /* Down arrow icon */
+  font-weight: bold;
+}
+
+/* Hover effect for the arrows */
+.up-arrow:hover, .down-arrow:hover {
+  color: #104a89; /* Darker shade on hover for feedback */
+}
+
+/* Update the link color to #1f6feb */
+.url-link {
+  flex-grow: 1;
+  text-decoration: none;
+  color: #1f6feb; /* Custom color for the link */
+  margin-left: 5px;
+}
+
+/* Hover effect for the links */
+.url-link:hover {
+  color: #104a89; /* Darken link on hover for better user feedback */
+}
+
+/* Trash icon styling */
+.trash-icon {
+  margin-left: 8px; /* Reduced margin for tighter spacing between link and trash icon */
+  cursor: pointer;
+}
+
+/* Responsive styling for small screens */
+@media screen and (max-width: 600px) {
+  .url-item-content {
+    flex-direction: column; /* Stack elements vertically on small screens */
+    align-items: flex-start; /* Align them to the left */
+  }
+
+  .arrow-container {
+    flex-direction: row; /* Align arrows side-by-side for smaller screens */
+    margin-bottom: 5px;
+  }
+}
+
+/* Edit Dropdown Styling */
+.edit-dropdown {
+  margin-top: 10px; /* Space above the dropdown */
+  background-color: #161b22; /* Dark background for the dropdown */
+  border: 1px solid #238636; /* Green border to match the Save button */
+  border-radius: 6px; /* Rounded corners */
+  padding: 10px; /* Padding inside the dropdown */
+  display: flex;
+  flex-direction: column;
+}
+
+.edit-dropdown.hidden {
+  display: none; /* Hide the dropdown when the class 'hidden' is present */
+}
+
+.edit-dropdown input {
+  margin-bottom: 10px; /* Space between the input fields */
+  padding: 1px; /* Slightly reduced padding */
+  border-radius: 6px;
+  border: 1px solid #c9d1d9;
+  background-color: #0d1117;
+  color: #c9d1d9;
+  font-size: 14px; /* Reduced font size */
+}
+
+.edit-dropdown button.save-edit {
+  padding: 8px;
+  border-radius: 6px;
+  border: none;
+  background-color: #238636; /* Save button in green */
+  color: white;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s;
+}
+
+/* Darken green on hover */
+.edit-dropdown button.save-edit:hover {
+  background-color: #113f1a; /* Darker green for hover state */
+}
+
+/* Styling for pencil (edit) icon */
+.edit-icon {
+  margin-left: 10px;
+  cursor: pointer;
   font-size: 16px;
 }
 
+.edit-icon:hover {
+  transform: scale(1.1); /* Slight scaling on hover */
+}
 
+/* Adjustments for the layout of the URL item */
+.url-item-content {
+  display: flex;
+  align-items: center;
+  padding: 3px 0;
+  margin-bottom: -5px; /* Reduced space between URL items */
+}
 
+.arrow-container {
+  display: flex;
+  flex-direction: row; /* Align arrows horizontally */
+  justify-content: center;
+  align-items: center;
+  margin-right: 8px;
+}
+
+/* Placeholder text styling */
+.edit-dropdown input::placeholder {
+  color: #6e7681; /* Lighter color for the placeholder text */
+  font-style: italic; /* Make it look more like a placeholder */
+}
