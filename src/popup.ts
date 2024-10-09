@@ -1,4 +1,4 @@
-import { addUrl, getSortedCategories, getUrlsInCategory, moveUrl, deleteUrlByIndex } from './components/urlList.js';
+import { addUrl, getSortedCategories, getUrlsInCategory, moveUrl, deleteUrlByIndex, deleteCategory } from './components/urlList.js';
 import { exportToJson, importFromJson } from './components/importExport.js';
 
 console.log("popup.js is loaded");
@@ -8,19 +8,17 @@ type UrlItem = {
   url: string;
 };
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   console.log("Popup script loaded");
 
-  // Fullscreen button logic
   const fullscreenBtn = document.getElementById('fullscreen-btn');
   if (fullscreenBtn) {
     fullscreenBtn.addEventListener('click', () => {
-      const fullScreenUrl = chrome.runtime.getURL('popup.html');
-      window.open(fullScreenUrl, '_blank'); // Open in a new tab
+      const fullScreenUrl = chrome.runtime.getURL('public/popup.html');
+      window.open(fullScreenUrl, '_blank');
     });
   }
 
-  // "+" and "-" button logic for showing/hiding URL form
   const addUrlButton = document.getElementById('add-url-btn');
   if (addUrlButton) {
     addUrlButton.addEventListener('click', () => {
@@ -28,186 +26,168 @@ document.addEventListener('DOMContentLoaded', () => {
       if (form) {
         form.classList.toggle('hidden');
         addUrlButton.textContent = form.classList.contains('hidden') ? "+" : "-";
-        console.log("Add URL button clicked, form toggled.");
       }
     });
   }
 
-  // Logic to save a URL
   const saveUrlButton = document.getElementById('save-url');
   if (saveUrlButton) {
     saveUrlButton.addEventListener('click', async () => {
-      const urlName = (document.getElementById('url-name') as HTMLInputElement).value;
-      const category = (document.getElementById('url-category') as HTMLInputElement).value;
-      let url = (document.getElementById('url-link') as HTMLInputElement).value;
+      const urlName = (document.getElementById('url-name') as HTMLInputElement).value.trim();
+      const category = (document.getElementById('url-category') as HTMLInputElement).value.trim();
+      let url = (document.getElementById('url-link') as HTMLInputElement).value.trim();
 
-      // Ensure URL starts with http:// or https://
+      if (!urlName || !category || !url) {
+        console.error("Missing URL, category, or name.");
+        return;
+      }
+
       if (!/^https?:\/\//i.test(url)) {
-        url = `http://${url}`;  // Add http:// if the URL doesn't start with http or https
+        url = `http://${url}`;
       }
 
-      if (urlName && category && url) {
-        try {
-          await addUrl(urlName, category, url);  // Add URL to the category
-          console.log(`Name: ${urlName}, URL: ${url}, Category: ${category} saved.`);
-          alert('URL successfully saved!');
-          await renderCategories(); // Update the category list
-        } catch (err) {
-          console.error("Failed to save URL", err);
-        }
-      } else {
-        console.log("Name, URL, or Category is missing.");
-      }
-    });
-  }
-
-  // Toggle the "Settings" section
-  const settingsLink = document.getElementById('settings-link');
-  const settingsSection = document.getElementById('settings-section');
-  if (settingsLink && settingsSection) {
-    settingsLink.addEventListener('click', () => {
-      settingsSection.classList.toggle('hidden');
-      console.log("Settings link clicked, toggled settings section.");
-    });
-  }
-
-  // Export JSON data
-  const exportBtn = document.getElementById('export-btn');
-  if (exportBtn) {
-    exportBtn.addEventListener('click', async () => {
-      console.log("Export button clicked.");
       try {
-        await exportToJson();
-        alert('Data exported successfully!');
+        await addUrl(urlName, category, url);
+        console.log(`Added URL: ${urlName}, Category: ${category}`);
+        await renderCategories();
       } catch (err) {
-        console.error("Failed to export data", err);
+        console.error("Failed to save URL", err);
       }
     });
   }
 
-  // Import JSON data
-  const importBtn = document.getElementById('import-btn');
-  if (importBtn) {
-    importBtn.addEventListener('click', () => {
-      console.log("Import button clicked.");
-      const input = document.createElement('input');
-      input.type = 'file';
-      input.accept = '.json';
-
-      input.onchange = async (event: any) => {
-        const file = event.target.files[0];
-        console.log(`File selected for import: ${file.name}`);
-
-        const reader = new FileReader();
-        reader.onload = async () => {
-          try {
-            const data = JSON.parse(reader.result as string); // Parse file contents
-
-            // Check if the data has the expected structure and save to storage
-            if (data.categories && Array.isArray(data.categories)) {
-              for (const category of data.categories) {
-                if (category.name && Array.isArray(category.urls)) {
-                  for (const urlItem of category.urls) {
-                    await addUrl(urlItem.name, category.name, urlItem.url); // Save each URL
-                  }
-                }
-              }
-            }
-
-            alert('Data imported successfully!');
-            await renderCategories();  // Re-render categories after import
-          } catch (err) {
-            console.error("Failed to import data", err);
-          }
-        };
-
-        reader.onerror = () => {
-          console.error("Failed to read file");
-        };
-
-        reader.readAsText(file);  // Read file as text
-      };
-
-      input.click();
+  const searchInput = document.getElementById('search-input') as HTMLInputElement;
+  if (searchInput) {
+    searchInput.addEventListener('input', async () => {
+      const query = searchInput.value.trim().toLowerCase();
+      await renderCategories(query);
     });
   }
 
-  // Function to render categories with drag-and-drop for reordering
-  async function renderCategories() {
-    const categories = await getSortedCategories();
-    const categoryList = document.getElementById('category-list');
+  async function renderCategories(searchQuery: string = '') {
+    let categories = await getSortedCategories();
+    categories = categories.filter((category, index, self) => category && category.trim() !== "" && self.indexOf(category) === index);
 
+    const categoryList = document.getElementById('category-list');
     if (categoryList) {
       categoryList.innerHTML = '';
+
       categories.forEach(async (category: string) => {
         const urls: UrlItem[] = await getUrlsInCategory(category);
-        const categorySection = document.createElement('div');
-        categorySection.classList.add('category-section');
-        categorySection.innerHTML = `<h3>${category}</h3>`;
+        const filteredUrls = urls.filter(({ name, url }) => 
+          name.toLowerCase().includes(searchQuery) || 
+          url.toLowerCase().includes(searchQuery) || 
+          category.toLowerCase().includes(searchQuery)
+        );
 
-        urls.forEach(({ name, url }: UrlItem, index: number) => {
-          const link = document.createElement('div');
-          link.draggable = true; // Make the link draggable
-          link.setAttribute('data-index', index.toString());
-          link.setAttribute('data-category', category);
-          link.innerHTML = `
-            <a href="${url}" target="_blank">${name}</a>
-            <span class="trash-icon">🗑️</span>
+        if (category.toLowerCase().includes(searchQuery) || filteredUrls.length > 0) {
+          const categorySection = document.createElement('div');
+          categorySection.classList.add('category-section');
+          categorySection.innerHTML = `
+            <h3>${category}
+              <span class="delete-category" data-category="${category}" style="cursor: pointer;">🗑️</span>
+            </h3>
+            <div class="url-list" id="category-${category}"></div>
           `;
 
-          // Add drag events
-          link.addEventListener('dragstart', handleDragStart);
-          link.addEventListener('dragover', handleDragOver);
-          link.addEventListener('drop', handleDrop);
+          categoryList.appendChild(categorySection);
 
-          // Event listener for deleting a URL
-          link.querySelector('.trash-icon')?.addEventListener('click', () => {
-            if (confirm('Are you sure you want to delete this URL?')) {
-              deleteUrlByIndex(category, index);
-              renderCategories();
-            }
-          });
+          const urlListDiv = document.getElementById(`category-${category}`);
+          if (urlListDiv) {
+            filteredUrls.forEach(({ name, url }, index) => {
+              const linkDiv = document.createElement('div');
+              linkDiv.classList.add('url-item');
+              linkDiv.setAttribute('data-index', index.toString());
+              linkDiv.setAttribute('data-category', category);
+              linkDiv.innerHTML = `
+              <div class="url-item-content">
+                <div class="arrow-container">
+                  <span class="up-arrow" data-index="${index}" data-category="${category}"></span>
+                  <span class="down-arrow" data-index="${index}" data-category="${category}"></span>
+                </div>
+                <a href="${url}" target="_blank" class="url-link">${name}</a>
+                <span class="edit-icon" data-index="${index}" data-category="${category}" style="cursor: pointer;">✏️</span>
+                <span class="trash-icon" data-index="${index}" data-category="${category}" style="cursor: pointer;">🗑️</span>
+              </div>
+              <div class="edit-dropdown hidden" id="edit-form-${category}-${index}">
+                <input type="text" class="edit-url-name" value="${name}" />
+                <input type="url" class="edit-url-link" value="${url}" />
+                <input type="text" class="edit-url-category" value="${category}" />
+                <button class="save-edit" style="background-color: #238636; color: white;">Save</button>
+              </div>
+            `;
 
-          categorySection.appendChild(link);
+              urlListDiv.appendChild(linkDiv);
+
+              // Add event listeners for moving up/down
+              linkDiv.querySelector('.up-arrow')?.addEventListener('click', () => moveUrlUp(category, index));
+              linkDiv.querySelector('.down-arrow')?.addEventListener('click', () => moveUrlDown(category, index));
+
+              // Add event listener for deleting a URL
+              linkDiv.querySelector('.trash-icon')?.addEventListener('click', async () => {
+                if (confirm('Are you sure you want to delete this URL?')) {
+                  await deleteUrlByIndex(category, index);
+                  await renderCategories();
+                }
+              });
+
+              // Add event listener for editing a URL
+              linkDiv.querySelector('.edit-icon')?.addEventListener('click', () => toggleEditDropdown(category, index));
+              linkDiv.querySelector('.save-edit')?.addEventListener('click', () => saveEdit(category, index));
+            });
+          }
+        }
+      });
+
+      document.querySelectorAll('.delete-category').forEach(button => {
+        button.addEventListener('click', async (event) => {
+          const categoryToDelete = (event.target as HTMLElement).getAttribute('data-category');
+          if (categoryToDelete && confirm(`Delete category "${categoryToDelete}"?`)) {
+            await deleteCategory(categoryToDelete);
+            await renderCategories();
+          }
         });
-
-        categoryList.appendChild(categorySection);
       });
     }
   }
 
-  // Drag-and-drop event handlers
-  let draggedIndex: number | null = null;
-  let draggedCategory: string | null = null;
-
-  function handleDragStart(event: DragEvent) {
-    const target = event.target as HTMLElement;
-    draggedIndex = Number(target.getAttribute('data-index'));
-    draggedCategory = target.getAttribute('data-category');
-    event.dataTransfer?.setData('text/plain', '');
-  }
-
-  function handleDragOver(event: DragEvent) {
-    event.preventDefault(); // Allow drop
-  }
-
-  async function handleDrop(event: DragEvent) {
-    const target = event.target as HTMLElement;
-    const dropIndex = Number(target.getAttribute('data-index'));
-    const dropCategory = target.getAttribute('data-category');
-
-    // Check if draggedCategory and dropCategory are not null before proceeding
-    if (draggedCategory && draggedIndex !== null && dropCategory === draggedCategory) {
-      if (draggedIndex !== dropIndex) {
-        await moveUrl(draggedCategory, draggedIndex, dropIndex); // Call function to reorder URLs
-        renderCategories(); // Re-render categories after drop
-      }
+  async function moveUrlUp(category: string, index: number) {
+    if (index > 0) {
+      await moveUrl(category, index, index - 1);
+      await renderCategories();
     }
-
-    draggedIndex = null;
-    draggedCategory = null;
   }
 
-  // Initial render of categories
+  async function moveUrlDown(category: string, index: number) {
+    const urls = await getUrlsInCategory(category);
+    if (index < urls.length - 1) {
+      await moveUrl(category, index, index + 1);
+      await renderCategories();
+    }
+  }
+
+  function toggleEditDropdown(category: string, index: number) {
+    const dropdown = document.getElementById(`edit-form-${category}-${index}`);
+    if (dropdown) {
+      dropdown.classList.toggle('hidden');
+    }
+  }
+
+  async function saveEdit(category: string, index: number) {
+    const nameInput = document.querySelector(`#edit-form-${category}-${index} .edit-url-name`) as HTMLInputElement;
+    const urlInput = document.querySelector(`#edit-form-${category}-${index} .edit-url-link`) as HTMLInputElement;
+    const categoryInput = document.querySelector(`#edit-form-${category}-${index} .edit-url-category`) as HTMLInputElement;
+
+    const newName = nameInput.value.trim();
+    const newUrl = urlInput.value.trim();
+    const newCategory = categoryInput.value.trim();
+
+    if (newName && newUrl) {
+      await deleteUrlByIndex(category, index);
+      await addUrl(newName, newCategory, newUrl);
+      await renderCategories();
+    }
+  }
+
   renderCategories();
 });
