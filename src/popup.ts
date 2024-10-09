@@ -1,5 +1,6 @@
 import { addUrl, getSortedCategories, getUrlsInCategory, moveUrl, deleteUrlByIndex, deleteCategory } from './components/urlList.js';
 import { exportToJson, importFromJson } from './components/importExport.js';
+import { saveToStorage, getFromStorage } from './storage.js'; // Add this line to import the functions
 
 console.log("popup.js is loaded");
 
@@ -18,6 +19,76 @@ document.addEventListener('DOMContentLoaded', async () => {
       window.open(fullScreenUrl, '_blank');
     });
   }
+
+  const settingsLink = document.getElementById('settings-link');
+  if (settingsLink) {
+    settingsLink.addEventListener('click', () => {
+      const settingsSection = document.getElementById('settings-section');
+      if (settingsSection) {
+        settingsSection.classList.toggle('hidden');
+        console.log("Settings section toggled.");
+      }
+    });
+  } else {
+    console.error("Settings link element not found.");
+  }
+  // Function to trigger JSON export
+  const exportBtn = document.getElementById('export-btn');
+  if (exportBtn) {
+    exportBtn.addEventListener('click', async () => {
+      try {
+        const urls = await getFromStorage(); // Assuming `getFromStorage()` fetches the stored URLs
+        const jsonData = JSON.stringify(urls, null, 2);
+        
+        const blob = new Blob([jsonData], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'urls_export.json';
+        a.click();
+        URL.revokeObjectURL(url); // Clean up the URL object
+
+        console.log("URLs exported as JSON.");
+      } catch (error) {
+        console.error("Error exporting URLs:", error);
+      }
+    });
+  }
+
+  // Function to trigger JSON import
+  const importBtn = document.getElementById('import-btn');
+  if (importBtn) {
+    importBtn.addEventListener('click', async () => {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'application/json';
+      
+      input.addEventListener('change', async (event: Event) => {
+        const file = (event.target as HTMLInputElement).files?.[0];
+        if (file) {
+          try {
+            const reader = new FileReader();
+            reader.onload = async (e: ProgressEvent<FileReader>) => {
+              const json = e.target?.result as string;
+              const importedUrls = JSON.parse(json);
+              
+              await saveToStorage(importedUrls); // Assuming `saveToStorage()` saves the URLs to storage
+              await renderCategories(); // Re-render the updated categories
+              console.log("URLs imported successfully.");
+            };
+            reader.readAsText(file);
+          } catch (error) {
+            console.error("Error importing URLs:", error);
+          }
+        }
+      });
+
+      input.click(); // Trigger the file input dialog
+    });
+  }
+
+
 
   const addUrlButton = document.getElementById('add-url-btn');
   if (addUrlButton) {
