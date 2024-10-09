@@ -30,24 +30,38 @@ h1 {
 }
 
 .add-btn {
-  background-color: #333;
+  background-color: #2ea44f; /* GitHub green */
   color: white;
-  font-size: 24px;
+  font-size: 16px; /* Reduced font size to match fullscreen button */
   border: none;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
+  border-radius: 50%; /* Make it fully rounded */
+  width: 35px; /* Same width as fullscreen button */
+  height: 35px; /* Same height as fullscreen button */
   cursor: pointer;
-  transition: transform 0.3s;
+  box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  transition: background-color 0.2s, box-shadow 0.2s;
+  position: absolute; /* Absolute positioning */
+  right: 10px; /* Align to the right */
+  top: 10px; /* Adjust top spacing */
+  display: flex; /* Ensure the "+" is centered */
+  justify-content: center;
+  align-items: center;
 }
 
 .add-btn:hover {
-  transform: scale(1.1);
+  background-color: #2c974b; /* Slightly darker green on hover */
+  box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.2); /* Increase shadow on hover */
+  transform: scale(1.05); /* Slight growth on hover */
+}
+
+.add-btn:active {
+  background-color: #2a8c47;
+  transform: scale(1); /* Return to original size */
 }
 
 /* Form and button styling */
 #url-form {
-  margin-top: 20px;
+  margin-top: 10px;  /* Reduce space between form and other elements */
 }
 
 #url-form.hidden {
@@ -81,27 +95,31 @@ button:hover {
 
 /* Search Input Styling */
 #search-container {
-  margin-bottom: 15px;
+  margin-bottom: 10px; /* Margin for spacing below */
+  margin-top: 10px;    /* Add top spacing */
+  display: flex;
+  justify-content: flex-start; /* Align the search bar to the left */
 }
 
 #search-input {
-  width: 75%;
-  padding: 8px;
-  border: 1px solid #d0d7de;
-  border-radius: 6px;
-  background-color: #0d1117;
-  font-size: 16px;
-  color: #c9d1d9;
-  box-shadow: inset 0 1px 2px rgba(0,0,0,0.075);
+  width: 100%;
+  max-width: 250px; /* Smaller width to make it more compact */
+  padding: 6px 12px; /* Reduced padding for a compact look */
+  font-size: 14px; /* Smaller font size */
+  color: #c9d1d9; /* Similar text color to GitHub */
+  background-color: #0d1117; /* Same dark background */
+  border: 1px solid #30363d; /* Border similar to GitHub */
+  border-radius: 6px; /* Rounded corners */
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.075); /* Slight inner shadow */
   transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-  line-height: 1.25; /* Matches GitHub styling */
 }
 
 /* Search input focus styling */
+
 #search-input:focus {
-  border-color: #1f6feb;
-  box-shadow: 0 0 0 3px rgba(31, 111, 235, 0.3); /* Blue outline on focus */
-  outline: none;
+  border-color: #1f6feb; /* Border color change on focus */
+  box-shadow: 0 0 0 3px rgba(31, 111, 235, 0.3); /* Subtle shadow on focus */
+  outline: none; /* Remove default outline */
 }
 
 /* Link List Styling */
@@ -141,22 +159,33 @@ button:hover {
 
 /* Fullscreen button at the bottom */
 .fullscreen-btn {
-  position: fixed;
-  bottom: 10px;
-  right: 10px;
-  background-color: #333;
+  background-color: #2ea44f; /* GitHub green */
   color: white;
   font-size: 16px;
   border: none;
-  border-radius: 50%;
-  width: 35px;
-  height: 35px;
+  border-radius: 50%; /* Round shape */
+  width: 36px;
+  height: 36px;
   cursor: pointer;
-  transition: transform 0.3s;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  transition: background-color 0.2s, box-shadow 0.2s;
+  position: absolute; /* Make the button position absolute */
+  right: 10px; /* Align to the right */
+  bottom: 10px; /* Stick to the bottom */
 }
 
 .fullscreen-btn:hover {
-  transform: scale(1.1);
+  background-color: #2c974b; /* Darker green for hover */
+  box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.2); /* Deeper shadow on hover */
+  transform: scale(1.05); /* Slight grow on hover */
+}
+
+.fullscreen-btn:active {
+  background-color: #2a8c47; /* Darker green for active state */
+  transform: scale(1); /* Return to original size on click */
 }
 
 /* Styling for the settings link */
@@ -165,10 +194,12 @@ button:hover {
   color: #fff;
   text-decoration: none;
   cursor: pointer;
-  position: fixed; /* Keeps it at the bottom */
-  bottom: 10px; /* Adjust as necessary for bottom spacing */
-  left: 20px; /* Align it with the left content */
-  padding-top: 25px; /* Add padding on top to create the needed space */
+  position: fixed;
+  bottom: 10px;
+  left: 20px;
+  padding: 10px;
+  background-color: #010409; /* Background color for the square */
+  border-radius: 0px 10px 0px 10px; /* Rounded top-right and bottom-left corners */
 }
 
 .settings-text:hover {
@@ -355,4 +386,75 @@ button:hover {
 .edit-dropdown input::placeholder {
   color: #6e7681; /* Lighter color for the placeholder text */
   font-style: italic; /* Make it look more like a placeholder */
+}
+
+/* Separator */
+.separator {
+  width: 100%;
+  height: 1px;
+  background-color: #353c44; /* The separator's color */
+  margin: 40px 0; /* Adds 30px space to the top and bottom */
+}
+
+input[type="text"],
+input[type="url"] {
+  width: 75%;  /* Reduce the width */
+  padding: 5px 10px;  /* Smaller padding */
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+  background-color: #0d1117;
+  font-size: 14px;  /* Smaller font size */
+  color: #c9d1d9;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.075);
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+input[type="text"]::placeholder,
+input[type="url"]::placeholder {
+  color: #8b949e;
+  font-size: 14px;  /* Smaller placeholder text */
+}
+
+input[type="text"]:focus,
+input[type="url"]:focus {
+  border-color: #1f6feb;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(31, 111, 235, 0.3);
+}
+
+
+
+button {
+  padding: 5px 10px;  /* Smaller padding */
+  background-color: #238636;
+  border: 1px solid rgba(27,31,36,0.15);
+  color: #ffffff;
+  border-radius: 6px;
+  font-size: 12px;  /* Smaller font size */
+  font-weight: 600;
+  line-height: 18px;  /* Reduced line height */
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+button:hover {
+  background-color: #2ea043;
+}
+
+button#save-url {
+  padding: 5px 12px;  /* Smaller padding */
+  background-color: #238636;
+  border: 1px solid rgba(27,31,36,0.15);
+  color: #ffffff;
+  border-radius: 6px;
+  font-size: 14px;  /* Smaller font size */
+  font-weight: 600;
+  line-height: 20px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  width: auto; /* Reduce the button width */
+}
+
+button#save-url:hover {
+  background-color: #2ea043;
 }
