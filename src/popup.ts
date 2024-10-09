@@ -84,9 +84,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           const categorySection = document.createElement('div');
           categorySection.classList.add('category-section');
           categorySection.innerHTML = `
-            <h3>${category}
-              <span class="delete-category" data-category="${category}" style="cursor: pointer;">🗑️</span>
-            </h3>
+            <h3>${category}</h3>
             <div class="url-list" id="category-${category}"></div>
           `;
 
