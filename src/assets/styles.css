@@ -14,6 +14,7 @@ body {
 #app {
   width: 100%;
   max-width: 400px;
+  min-width: 500px; /* Set a minimum width for better widget appearance */
 }
 
 .header {
@@ -164,9 +165,10 @@ button:hover {
   color: #fff;
   text-decoration: none;
   cursor: pointer;
-  position: fixed; /* Make it stick to the bottom */
-  bottom: 10px; /* Adjust as necessary for spacing */
-  left: 20px; /* Align with other content on the left */
+  position: fixed; /* Keeps it at the bottom */
+  bottom: 10px; /* Adjust as necessary for bottom spacing */
+  left: 20px; /* Align it with the left content */
+  padding-top: 25px; /* Add padding on top to create the needed space */
 }
 
 .settings-text:hover {
@@ -202,15 +204,18 @@ button:hover {
 .url-item-content {
   display: flex;
   align-items: center;
+  justify-content: space-between; /* Assure que les éléments sont sur une seule ligne */
   padding: 3px 0;
-  margin-bottom: -5px; /* Reduced space between URL items */
+  margin-bottom: 5px; /* Espace entre les URLs */
+  flex-wrap: nowrap; /* Empêche les éléments de passer à la ligne suivante */
 }
+
 
 .arrow-container {
   display: flex;
   flex-direction: row; /* Align arrows horizontally */
   justify-content: center;
-  align-items: center; /* Ensure arrows are centered vertically */
+  align-items: center;
   margin-right: 8px; /* Maintain space between arrows and the link */
 }
 
@@ -219,8 +224,8 @@ button:hover {
   cursor: pointer;
   font-size: 16px;
   color: #1f6feb;
-  font-weight: bold; /* Makes the arrows appear thicker */
-  margin-left: 5px; /* Add some spacing between the two arrows */
+  font-weight: bold;
+  margin-left: 5px;
   transition: color 0.3s;
 }
 
@@ -241,10 +246,13 @@ button:hover {
 
 /* Update the link color to #1f6feb */
 .url-link {
-  flex-grow: 1;
+  flex-grow: 1; /* Lien prend toute la place disponible */
   text-decoration: none;
-  color: #1f6feb; /* Custom color for the link */
+  color: #1f6feb;
   margin-left: 5px;
+  white-space: nowrap; /* Empêche le texte de s'éclater sur plusieurs lignes */
+  overflow: hidden;
+  text-overflow: ellipsis; /* Ajoute des points de suspension si le texte est trop long */
 }
 
 /* Hover effect for the links */
@@ -261,16 +269,20 @@ button:hover {
 /* Responsive styling for small screens */
 @media screen and (max-width: 600px) {
   .url-item-content {
-    flex-direction: column; /* Stack elements vertically on small screens */
-    align-items: flex-start; /* Align them to the left */
+    flex-direction: row; /* Garder les éléments alignés horizontalement */
+    align-items: center;
   }
 
   .arrow-container {
-    flex-direction: row; /* Align arrows side-by-side for smaller screens */
-    margin-bottom: 5px;
+    display: flex;
+    flex-direction: row; /* Aligner horizontalement */
+    margin-right: 8px;
   }
 }
-
+.trash-icon, .edit-icon {
+  margin-left: 10px;
+  cursor: pointer;
+}
 /* Edit Dropdown Styling */
 .edit-dropdown {
   margin-top: 10px; /* Space above the dropdown */
@@ -314,7 +326,7 @@ button:hover {
 
 /* Styling for pencil (edit) icon */
 .edit-icon {
-  margin-left: 10px;
+  margin-left: 5px;
   cursor: pointer;
   font-size: 16px;
 }
