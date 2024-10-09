@@ -21,11 +21,26 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   const addUrlButton = document.getElementById('add-url-btn');
   if (addUrlButton) {
-    addUrlButton.addEventListener('click', () => {
+    addUrlButton.addEventListener('click', async () => {
       const form = document.getElementById('url-form');
       if (form) {
         form.classList.toggle('hidden');
         addUrlButton.textContent = form.classList.contains('hidden') ? "+" : "-";
+
+        // Get the current tab's title and URL
+        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+          const currentTab = tabs[0];
+          if (currentTab) {
+            const urlNameInput = document.getElementById('url-name') as HTMLInputElement;
+            const urlLinkInput = document.getElementById('url-link') as HTMLInputElement;
+            const urlCategoryInput = document.getElementById('url-category') as HTMLInputElement;
+
+            // Pre-fill the form with the current tab's title, URL, and default category
+            urlNameInput.value = currentTab.title || 'New URL';
+            urlLinkInput.value = currentTab.url || '';
+            urlCategoryInput.value = 'default';
+          }
+        });
       }
     });
   }
@@ -125,6 +140,14 @@ document.addEventListener('DOMContentLoaded', async () => {
               linkDiv.querySelector('.trash-icon')?.addEventListener('click', async () => {
                 if (confirm('Are you sure you want to delete this URL?')) {
                   await deleteUrlByIndex(category, index);
+                  
+                  // After deleting, check if the category is empty
+                  const remainingUrls = await getUrlsInCategory(category);
+                  if (remainingUrls.length === 0) {
+                    await deleteCategory(category); // Automatically delete the category if it's empty
+                    console.log(`Deleted empty category: ${category}`);
+                  }
+
                   await renderCategories();
                 }
               });
