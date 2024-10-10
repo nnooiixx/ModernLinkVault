@@ -1,10 +1,11 @@
 import { addUrl, getSortedCategories, getUrlsInCategory, moveUrl, deleteUrlByIndex, deleteCategory } from './components/urlList.js';
 import { exportToJson, importFromJson } from './components/importExport.js';
-import { saveToStorage, getFromStorage } from './storage.js'; 
+import { saveToStorage, getFromStorage } from './storage.js';
 
 console.log("popup.js is loaded");
 
 type UrlItem = {
+  id: string;
   name: string;
   url: string;
 };
@@ -14,11 +15,29 @@ type UrlCollection = Record<string, UrlItem[]>;
 document.addEventListener('DOMContentLoaded', async () => {
   console.log("Popup script loaded");
 
+  const settingsLink = document.getElementById('settings-link');
+  if (settingsLink) {
+    settingsLink.addEventListener('click', () => {
+      const settingsSection = document.getElementById('settings-section');
+      if (settingsSection) {
+        settingsSection.classList.toggle('hidden');
+        console.log("Settings section toggled.");
+      }
+    });
+  } else {
+    console.error("Settings link element not found.");
+  }
+
   const syncUrlButton = document.getElementById('sync-url-btn');
-  
+  const syncUrlInput = document.getElementById('sync-url-input') as HTMLInputElement;
+
+  const savedSyncUrl = await getStoredSyncUrl();
+  if (savedSyncUrl) {
+    syncUrlInput.value = savedSyncUrl;
+  }
+
   if (syncUrlButton) {
     syncUrlButton.addEventListener('click', async () => {
-      const syncUrlInput = document.getElementById('sync-url-input') as HTMLInputElement;
       const syncUrl = syncUrlInput.value.trim();
 
       if (!syncUrl) {
@@ -30,25 +49,26 @@ document.addEventListener('DOMContentLoaded', async () => {
         const remoteUrls = await fetchAndValidateUrls(syncUrl);
         if (remoteUrls) {
           const localUrls = await getLocalUrls();
-          const mergedUrls = mergeUrls(localUrls, remoteUrls);
+          const mergedUrls = mergeUrlsWithoutOverwriting(localUrls, remoteUrls);
           await saveToStorage('urls', mergedUrls);
           await renderCategories();
+
+          await saveSyncUrl(syncUrl);
           alert("URLs synchronized successfully.");
         }
       } catch (error) {
+        console.error("Sync error:", error);
       }
     });
   }
 
-  /**
-   * Fetches and validates the remote URLs from the provided URL.
-   * @param url - The URL to fetch the JSON data from.
-   */
   async function fetchAndValidateUrls(url: string): Promise<UrlCollection | null> {
     try {
-      const response = await fetch(url);
+      // Cache-busting: append a timestamp to the URL to ensure fresh data is fetched
+      const cacheBustingUrl = `${url}?t=${Date.now()}`;
+      const response = await fetch(cacheBustingUrl, { cache: 'no-store' });
       if (!response.ok) throw new Error(`Failed to fetch: ${response.statusText}`);
-      
+
       const data: UrlCollection = await response.json();
       if (!validateUrlData(data)) throw new Error("Invalid URL data format.");
       return data;
@@ -58,16 +78,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   }
 
-  /**
-   * Validates the structure of the fetched URL data.
-   */
   function validateUrlData(data: any): data is UrlCollection {
-    return typeof data === 'object' && Object.values(data).every((urls) => Array.isArray(urls));
+    return typeof data === 'object' && Object.values(data).every((urls) => Array.isArray(urls) && urls.every(url => url.name && url.url));
   }
 
-  /**
-   * Fetches local URLs from Chrome storage.
-   */
   async function getLocalUrls(): Promise<UrlCollection> {
     return new Promise((resolve) => {
       chrome.storage.local.get('urls', (result) => {
@@ -78,36 +92,67 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   /**
-   * Merges remote URLs with local URLs, avoiding duplicates.
+   * Merges remote URLs with local URLs, skipping URLs with duplicate IDs.
+   * If the URL has an ID of "0", a new unique ID is generated.
    * @param localUrls - Local URLs stored in the browser.
    * @param remoteUrls - URLs fetched from the remote source.
    */
-  function mergeUrls(localUrls: UrlCollection, remoteUrls: UrlCollection): UrlCollection {
+  function mergeUrlsWithoutOverwriting(localUrls: UrlCollection, remoteUrls: UrlCollection): UrlCollection {
     const merged = { ...localUrls };
-    
+
     for (const [category, urls] of Object.entries(remoteUrls)) {
-      if (!Array.isArray(urls)) continue;  // Skip invalid categories
-      if (!merged[category]) merged[category] = urls;
-      else {
-        const localSet = new Set(merged[category].map(item => item.url));
-        urls.forEach(item => {
-          if (!localSet.has(item.url)) merged[category].push(item);
-        });
+      if (!Array.isArray(urls)) continue;
+
+      if (!merged[category]) {
+        merged[category] = [];
+      }
+
+      const localIds = new Set(merged[category].map(urlItem => urlItem.id));
+      urls.forEach(remoteUrlItem => {
+        // Generate a unique ID if the ID is '0'
+        if (remoteUrlItem.id === '0') {
+          remoteUrlItem.id = generateUniqueId();
+        }
+        if (!localIds.has(remoteUrlItem.id)) {
+          merged[category].push(remoteUrlItem); // Only add remote URLs if the id doesn't exist locally
+        } else {
+          console.log(`Skipping URL with duplicate ID: ${remoteUrlItem.id}`);
+        }
+      });
+
+      // Automatically delete category if it ends up empty
+      if (merged[category].length === 0) {
+        delete merged[category];
       }
     }
+
     return merged;
   }
 
-  /**
-   * Saves the merged URLs to Chrome storage.
-   */
   async function saveToStorage(key: string, data: any): Promise<void> {
     return new Promise((resolve) => {
       chrome.storage.local.set({ [key]: data }, resolve);
     });
   }
 
-  // Handle full-screen view toggle
+  async function saveSyncUrl(syncUrl: string): Promise<void> {
+    return new Promise((resolve) => {
+      chrome.storage.local.set({ syncUrl }, resolve);
+    });
+  }
+
+  async function getStoredSyncUrl(): Promise<string | null> {
+    return new Promise((resolve) => {
+      chrome.storage.local.get('syncUrl', (result) => {
+        resolve(result.syncUrl || null);
+      });
+    });
+  }
+
+  function generateUniqueId(): string {
+    return `url_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  }
+
   const fullscreenBtn = document.getElementById('fullscreen-btn');
   if (fullscreenBtn) {
     fullscreenBtn.addEventListener('click', () => {
@@ -116,24 +161,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
-  // Settings link toggle
-  const settingsLink = document.getElementById('settings-link');
-  if (settingsLink) {
-    settingsLink.addEventListener('click', () => {
-      const settingsSection = document.getElementById('settings-section');
-      if (settingsSection) {
-        settingsSection.classList.toggle('hidden');
-        console.log("Settings section toggled.");
-      }
-    });
-  }
-
-  // Export button functionality
   const exportBtn = document.getElementById('export-btn');
   if (exportBtn) {
     exportBtn.addEventListener('click', async () => {
       try {
-        const urls = await getFromStorage(); 
+        const urls = await getFromStorage();
         const jsonData = JSON.stringify(urls, null, 2);
 
         const blob = new Blob([jsonData], { type: 'application/json' });
@@ -152,7 +184,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
-  // Import button functionality
   const importBtn = document.getElementById('import-btn');
   if (importBtn) {
     importBtn.addEventListener('click', async () => {
@@ -167,11 +198,16 @@ document.addEventListener('DOMContentLoaded', async () => {
             const reader = new FileReader();
             reader.onload = async (e: ProgressEvent<FileReader>) => {
               const json = e.target?.result as string;
-              const importedUrls = JSON.parse(json);
+              const importedUrls: UrlCollection = JSON.parse(json);
 
-              await chrome.storage.local.set({ urls: importedUrls });  
+              const localUrls: UrlCollection = await getLocalUrls();
+
+              const mergedUrls = mergeUrlsWithoutOverwriting(localUrls, importedUrls);
+
+              // Save merged URLs without overwriting the existing ones
+              await chrome.storage.local.set({ urls: mergedUrls });
               await renderCategories();
-              console.log("URLs imported successfully.");
+              console.log("URLs imported successfully, skipping duplicates.");
             };
             reader.readAsText(file);
           } catch (error) {
@@ -192,7 +228,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         form.classList.toggle('hidden');
         addUrlButton.textContent = form.classList.contains('hidden') ? "+" : "-";
 
-        // Get the current tab's title and URL
         chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
           const currentTab = tabs[0];
           if (currentTab) {
@@ -200,7 +235,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             const urlLinkInput = document.getElementById('url-link') as HTMLInputElement;
             const urlCategoryInput = document.getElementById('url-category') as HTMLInputElement;
 
-            // Pre-fill the form with the current tab's title, URL, and default category
             urlNameInput.value = currentTab.title || 'New URL';
             urlLinkInput.value = currentTab.url || '';
             urlCategoryInput.value = 'default';
@@ -226,9 +260,17 @@ document.addEventListener('DOMContentLoaded', async () => {
         url = `http://${url}`;
       }
 
+      const id = generateUniqueId();  // Generate the unique ID here
+
       try {
-        await addUrl(urlName, category, url);
-        await renderCategories();
+        const newUrl: UrlItem = { id, name: urlName, url };  // Include the generated ID
+        const urlsInCategory = await getUrlsInCategory(category) || [];
+        urlsInCategory.push(newUrl);  // Add the new URL with ID to the category
+
+        // Save the updated category with the new URL (including the ID)
+        await chrome.storage.local.set({ urls: { ...await getLocalUrls(), [category]: urlsInCategory } });
+        await renderCategories();  // Re-render the categories with the new URL
+        console.log(`Added URL: ${urlName}, Category: ${category}, ID: ${id}`);
       } catch (err) {
         console.error("Failed to save URL", err);
       }
@@ -243,6 +285,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
+  /**
+   * Renders the categories and their URLs, optionally filtered by a search query.
+   * @param searchQuery - An optional search query to filter the URLs by.
+   */
   async function renderCategories(searchQuery: string = '') {
     let categories = await getSortedCategories();
     categories = categories.filter((category, index, self) => category && category.trim() !== "" && self.indexOf(category) === index);
@@ -253,6 +299,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       categories.forEach(async (category: string) => {
         const urls: UrlItem[] = await getUrlsInCategory(category);
+        console.log(`Rendering URLs in category '${category}':`, urls);
+
         const filteredUrls = urls.filter(({ name, url }) => 
           name.toLowerCase().includes(searchQuery) || 
           url.toLowerCase().includes(searchQuery) || 
@@ -271,17 +319,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 
           const urlListDiv = document.getElementById(`category-${category}`);
           if (urlListDiv) {
-            filteredUrls.forEach(({ name, url }, index) => {
+            filteredUrls.forEach(({ id, name, url }, index) => {
               const linkDiv = document.createElement('div');
               linkDiv.classList.add('url-item');
               linkDiv.setAttribute('data-index', index.toString());
+              linkDiv.setAttribute('data-id', id);
               linkDiv.setAttribute('data-category', category);
               linkDiv.innerHTML = `
                 <div class="url-item-content">
-                  <div class="arrow-container">
-                    <span class="up-arrow" data-index="${index}" data-category="${category}"></span>
-                    <span class="down-arrow" data-index="${index}" data-category="${category}"></span>
-                  </div>
                   <a href="${url}" target="_blank" class="url-link">${name}</a>
                   <span class="edit-icon" data-index="${index}" data-category="${category}" style="cursor: pointer;">✏️</span>
                   <span class="trash-icon" data-index="${index}" data-category="${category}" style="cursor: pointer;">🗑️</span>
@@ -290,71 +335,39 @@ document.addEventListener('DOMContentLoaded', async () => {
                   <input type="text" class="edit-url-name" value="${name}" />
                   <input type="url" class="edit-url-link" value="${url}" />
                   <input type="text" class="edit-url-category" value="${category}" />
-                  <button class="save-edit" style="background-color: #238636; color: white;">Save</button>
+                  <button class="save-edit">Save</button>
                 </div>
               `;
 
               urlListDiv.appendChild(linkDiv);
 
               // Add event listeners for moving up/down
-              linkDiv.querySelector('.up-arrow')?.addEventListener('click', () => moveUrlUp(category, index));
-              linkDiv.querySelector('.down-arrow')?.addEventListener('click', () => moveUrlDown(category, index));
+              linkDiv.querySelector('.edit-icon')?.addEventListener('click', () => toggleEditDropdown(category, index));
+              linkDiv.querySelector('.save-edit')?.addEventListener('click', () => saveEdit(category, index));
 
               // Add event listener for deleting a URL
               linkDiv.querySelector('.trash-icon')?.addEventListener('click', async () => {
                 if (confirm('Are you sure you want to delete this URL?')) {
                   await deleteUrlByIndex(category, index);
                   
+                  // After deleting, check if the category is empty
                   const remainingUrls = await getUrlsInCategory(category);
                   if (remainingUrls.length === 0) {
-                    await deleteCategory(category);
+                    await deleteCategory(category); // Automatically delete the category if it's empty
                     console.log(`Deleted empty category: ${category}`);
                   }
 
                   await renderCategories();
                 }
               });
-
-              // Add event listener for editing a URL
-              linkDiv.querySelector('.edit-icon')?.addEventListener('click', () => toggleEditDropdown(category, index));
-              linkDiv.querySelector('.save-edit')?.addEventListener('click', () => saveEdit(category, index));
             });
           }
         }
       });
-
-      document.querySelectorAll('.delete-category').forEach(button => {
-        button.addEventListener('click', async (event) => {
-          const categoryToDelete = (event.target as HTMLElement).getAttribute('data-category');
-          if (categoryToDelete && confirm(`Delete category "${categoryToDelete}"?`)) {
-            await deleteCategory(categoryToDelete);
-            await renderCategories();
-          }
-        });
-      });
     }
   }
 
-  async function moveUrlUp(category: string, index: number) {
-    const scrollPosition = window.pageYOffset;
-    if (index > 0) {
-      await moveUrl(category, index, index - 1);
-      await renderCategories();
-    }
-    window.scrollTo(0, scrollPosition);
-  }
-
-  async function moveUrlDown(category: string, index: number) {
-    const scrollPosition = window.pageYOffset;
-    const urls = await getUrlsInCategory(category);
-    if (index < urls.length - 1) {
-      await moveUrl(category, index, index + 1);
-      await renderCategories();
-    }
-    window.scrollTo(0, scrollPosition);
-  }
-
-  function toggleEditDropdown(category: string, index: number) {
+  async function toggleEditDropdown(category: string, index: number) {
     const dropdown = document.getElementById(`edit-form-${category}-${index}`);
     if (dropdown) {
       dropdown.classList.toggle('hidden');
