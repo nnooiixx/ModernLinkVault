@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "ES6",                 // Utiliser ES6 comme version cible de JavaScript
+    "target": "ES2017",                 // Utiliser ES6 comme version cible de JavaScript
     "module": "ESNext",              // Utiliser les modules ES
     "moduleResolution": "node",
     "outDir": "./public",            // Assure-toi que les fichiers sont compilés dans ce dossier
