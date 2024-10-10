@@ -1,32 +1,29 @@
 {
   "default": [
     {
-      "name": "Gestionnaire d'URLs",
-      "url": "http://moz-extension://070dfc29-50d5-4fb3-bab2-58a3507bb4d1/public/popup.html#"
+      "id": "url_1728578051898_4yaazqu8v",
+      "name": "Gestionnaire d'URLs0",
+      "url": "http://moz-extension://720d497f-2005-4abb-9bf6-bca6c0ff2046/public/popup.html#"
     },
     {
-      "name": "Gestionnaire d'URLs",
-      "url": "http://moz-extension://070dfc29-50d5-4fb3-bab2-58a3507bb4d1/public/popup.html#"
+      "id": "url_1728578110137_lxb6fwjgz",
+      "name": "Gestionnaire d'URLs1",
+      "url": "http://moz-extension://720d497f-2005-4abb-9bf6-bca6c0ff2046/public/popup.html#"
     },
     {
-      "name": "Gestionnaire d'URLs",
-      "url": "http://moz-extension://070dfc29-50d5-4fb3-bab2-58a3507bb4d1/public/popup.html#"
+      "id": "url_1728578110409_9g4futsc8",
+      "name": "Gestionnaire d'URLs2",
+      "url": "http://moz-extension://720d497f-2005-4abb-9bf6-bca6c0ff2046/public/popup.html#"
     },
     {
-      "name": "Gestionnaire d'URLs",
-      "url": "http://moz-extension://070dfc29-50d5-4fb3-bab2-58a3507bb4d1/public/popup.html#"
+      "id": "url_1728578110599_pj3zzlxrx",
+      "name": "Gestionnaire d'URLs3",
+      "url": "http://moz-extension://720d497f-2005-4abb-9bf6-bca6c0ff2046/public/popup.html#"
     },
     {
-      "name": "Gestionnaire d'URLs",
-      "url": "http://moz-extension://070dfc29-50d5-4fb3-bab2-58a3507bb4d1/public/popup.html#"
-    },
-    {
-      "name": "Gestionnaire d'URLs",
-      "url": "http://moz-extension://070dfc29-50d5-4fb3-bab2-58a3507bb4d1/public/popup.html#"
-    },
-    {
-      "name": "Gestionnaire d'URLss",
-      "url": "http://moz-extension://070dfc29-50d5-4fb3-bab2-58a3507bb4d1/public/popup.html#"
+      "id": "url_1728578111498_n0azx6p84",
+      "name": "Gestionnaire d'URLs4",
+      "url": "http://moz-extension://720d497f-2005-4abb-9bf6-bca6c0ff2046/public/popup.html#"
     }
   ]
 }
