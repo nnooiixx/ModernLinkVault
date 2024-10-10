@@ -1,0 +1,388 @@
+{
+  "Tutoriels": [
+    {
+      "name": "Le protocole NFS pour les débutants | IT-Connect",
+      "url": "https://www.it-connect.fr/le-protocole-nfs-pour-les-debutants/"
+    },
+    {
+      "name": "Own mail server based on Dovecot, Postfix, MySQL, Rspamd and Debian 9 Stretch",
+      "url": "https://thomas-leister.de/en/mailserver-debian-stretch/"
+    },
+    {
+      "name": "Install Web Based Download Utility with Aria2 WebUI on Debian/Ubuntu",
+      "url": "https://i12bretro.github.io/tutorials/0254.html"
+    },
+    {
+      "name": "stuntbanana/stuntbanana: Minimalist Asterisk Caller ID Spoofer",
+      "url": "https://github.com/stuntbanana/stuntbanana"
+    },
+    {
+      "name": "Comment créer votre propre usurpateur d'identification de l'appelant : Partie 1 | Blogue Rapid7",
+      "url": "https://www.rapid7.com/blog/post/2018/05/24/how-to-build-your-own-caller-id-spoofer-part-1/"
+    },
+    {
+      "name": "Nextcloud | La librairie",
+      "url": "https://librairie.grap.coop/books/nextcloud"
+    },
+    {
+      "name": "Formatux :: Formatux",
+      "url": "https://www.formatux.fr/formatux-formatux/index.html"
+    },
+    {
+      "name": "Quelques tool Steganographie",
+      "url": "https://k-lfa.info/tools-stegano/"
+    },
+    {
+      "name": "Sécurité militante | Wiki XR",
+      "url": "https://wiki.extinctionrebellion.fr/books/securite-militante"
+    }
+  ],
+  "Veille Technologique": [
+    {
+      "name": "Anti-Malware.ru",
+      "url": "https://www.anti-malware.ru/"
+    },
+    {
+      "name": "ZATAZ",
+      "url": "https://www.zataz.com/"
+    },
+    {
+      "name": "IT-Connect | Tutoriels - Cours informatique - Tests - Vidéos",
+      "url": "https://www.it-connect.fr/"
+    },
+    {
+      "name": "Cyber Security news - Latest Security News | Security Magazine",
+      "url": "https://gbhackers.com/"
+    },
+    {
+      "name": "Tom's Hardware - Actualité informatique, numérique et mobile",
+      "url": "https://www.tomshardware.fr/"
+    },
+    {
+      "name": "La Ferme du Hardware, actualité informatique et high-tech",
+      "url": "https://www.cowcotland.com/"
+    },
+    {
+      "name": "Frandroid – La référence tech pour s’informer, comparer et bien acheter",
+      "url": "https://www.frandroid.com/"
+    },
+    {
+      "name": "Help Net Security - Cybersecurity News",
+      "url": "https://www.helpnetsecurity.com/"
+    },
+    {
+      "name": "Korben - Upgrade your mind",
+      "url": "https://korben.info/"
+    },
+    {
+      "name": "Atlas - Le journal du hacker",
+      "url": "http://atlasflux.suptribune.org/Outil_RSS_lecture.php?code_id=10194&charge=&urllist=agrege_informatique"
+    },
+    {
+      "name": "iTPro.fr",
+      "url": "https://www.itpro.fr/"
+    },
+    {
+      "name": "Comprendre les CVE et leur score CVSS | Knock-Knock",
+      "url": "https://www.knock-knock.fr/blog/comprendre-les-cve-et-leur-score-cvss/"
+    },
+    {
+      "name": "nomi-sec/PoC-in-GitHub : Collecte automatique PoC depuis GitHub",
+      "url": "https://github.com/nomi-sec/PoC-in-GitHub"
+    }
+  ],
+  "Outils en Ligne": {
+    "Images": [
+      {
+        "name": "Filigrane Facile",
+        "url": "https://filigrane.beta.gouv.fr/"
+      },
+      {
+        "name": "Supprimer Filigrane - Watermark Remover d'Image En Ligne - 100% Gratuit",
+        "url": "https://www.watermarkremover.io/fr"
+      },
+      {
+        "name": "Cleanup.pictures - Remove objects, people, text and defects from any picture",
+        "url": "https://cleanup.pictures/"
+      },
+      {
+        "name": "FotoForensics",
+        "url": "https://fotoforensics.com/"
+      }
+    ],
+    "Intelligence Artificielle (AI)": [
+      {
+        "name": "Get Featured On There's An AI For That",
+        "url": "https://theresanaiforthat.com/get-featured/"
+      },
+      {
+        "name": "ChatGPT",
+        "url": "https://chat.openai.com/"
+      },
+      {
+        "name": "MistralAI",
+        "url": "https://chat.mistral.ai/chat"
+      },
+      {
+        "name": "Groq",
+        "url": "https://groq.com/"
+      },
+      {
+        "name": "Liste des Meilleures IA Gratuites & Top 10 par Catégorie | Aixploria",
+        "url": "https://www.aixploria.com/"
+      },
+      {
+        "name": "BlinkDL/rwkv-4-raven · Hugging Face",
+        "url": "https://huggingface.co/BlinkDL/rwkv-4-raven"
+      },
+      {
+        "name": "BlinkDL/ChatRWKV : ChatRWKV alimenté par le modèle RWKV",
+        "url": "https://github.com/BlinkDL/ChatRWKV"
+      },
+      {
+        "name": "facebookresearch/llama: Inference code for LLaMA models",
+        "url": "https://github.com/facebookresearch/llama"
+      },
+      {
+        "name": "AI Code Converter | AI Code Translator",
+        "url": "https://aicodeconvert.com/"
+      },
+      {
+        "name": "CHAGPT LIKE en local avec LLM ou externe via API",
+        "url": "https://github.com/open-webui/open-webui"
+      }
+    ],
+    "Suivi de Colis": [
+      {
+        "name": "17TRACK - ALLES-IN-ÉÉN PAKKET TRACKING",
+        "url": "https://www.17track.net/nl"
+      },
+      {
+        "name": "Parcel Tracking - Track my International Parcel | k2track.in",
+        "url": "https://k2track.in/"
+      }
+    ]
+  },
+  "OSINT (Open Source Intelligence)": {
+    "IP - MAC": [
+      {
+        "name": "IPinfo.io - IP Address Data Provider",
+        "url": "https://ipinfo.io/"
+      },
+      {
+        "name": "MAC Vendor Lookup Tool & API",
+        "url": "https://macvendors.com/"
+      },
+      {
+        "name": "Criminal IP",
+        "url": "https://www.criminalip.io/en"
+      },
+      {
+        "name": "MAC Address Lookup - DNSChecker",
+        "url": "https://dnschecker.org/mac-lookup.php"
+      },
+      {
+        "name": "Identifier un opérateur par un numéro | Arcep",
+        "url": "https://www.arcep.fr/demarches-et-services/professionnels/base-numerotation.html"
+      },
+      {
+        "name": "Censys Search",
+        "url": "https://search.censys.io/"
+      },
+      {
+        "name": "ZoomEye - Cyberspace Mapping",
+        "url": "https://www.zoomeye.org/"
+      },
+      {
+        "name": "FOFA Search Engine",
+        "url": "https://en.fofa.info/"
+      }
+    ],
+    "Social": [
+      {
+        "name": "Unlisted Videos",
+        "url": "https://unlistedvideos.com/search.php?user="
+      },
+      {
+        "name": "La Toolbox du Growth - Growthhacking.fr",
+        "url": "https://www.growthhacking.fr/t/la-toolbox-du-growth/9188"
+      }
+    ],
+    "Recherche de Mots-clés": [
+      {
+        "name": "Keyword Sheeter",
+        "url": "https://keywordsheeter.com/"
+      },
+      {
+        "name": "OneLook Thesaurus and Reverse Dictionary",
+        "url": "https://www.onelook.com/reverse-dictionary.shtml"
+      },
+      {
+        "name": "Keyword Discovery",
+        "url": "https://www.keyworddiscovery.com/"
+      },
+      {
+        "name": "Keyword Tool ⚠️ Google Keyword Planner",
+        "url": "https://keywordtool.io/"
+      }
+    ],
+    "Reconnaissance Faciale": [
+      {
+        "name": "PimEyes",
+        "url": "https://pimeyes.com/en"
+      },
+      {
+        "name": "FaceCheck - Reverse Image Search",
+        "url": "https://facecheck.id/"
+      }
+    ],
+    "Mots de Passe": [
+      {
+        "name": "Have I Been Pwned",
+        "url": "https://haveibeenpwned.com/"
+      },
+      {
+        "name": "CrackStation - Online Password Hash Cracking",
+        "url": "https://crackstation.net/"
+      },
+      {
+        "name": "Rabbit Finder",
+        "url": "https://rabbit.blackbox.sh/index"
+      },
+      {
+        "name": "Weakpass",
+        "url": "https://weakpass.com/wordlist"
+      },
+      {
+        "name": "BreachDirectory",
+        "url": "https://breachdirectory.org/"
+      },
+      {
+        "name": "NTLM to Plaintext Password Lookup",
+        "url": "https://ntlm.pw/"
+      },
+      {
+        "name": "EXPOSED",
+        "url": "https://exposed.lol/"
+      },
+      {
+        "name": "Analyst Research Tools",
+        "url": "https://analystresearchtools.com/"
+      }
+    ],
+    "SMS": [
+      {
+        "name": "Receive SMS Online",
+        "url": "https://temporary-phone-number.com/"
+      },
+      {
+        "name": "Virtual Phone Numbers to Receive SMS Online | SMS-Activate",
+        "url": "https://sms-activate.org/en"
+      },
+      {
+        "name": "Online SMS Verification Service | 5sim.net",
+        "url": "https://5sim.net/"
+      }
+    ]
+  },
+  "DevOps": [
+    {
+      "name": "Le Site d'un Consultant DevOps | Stéphane ROBERT",
+      "url": "https://blog.stephane-robert.info/"
+    },
+    {
+      "name": "Notamax - Administration Systèmes, Réseaux, et Cybersécurité",
+      "url": "https://notamax.be/"
+    }
+  ],
+  "Divers": {
+    "Matériel (Hardware)": [
+      {
+        "name": "Hard Drive Capacity Calculator",
+        "url": "https://platinumdatarecovery.com/hard-drive-capacity-calculator"
+      },
+      {
+        "name": "Erase hard disk tool with certificate",
+        "url": "https://github.com/PartialVolume/shredos.x86_64"
+      }
+    ],
+    "Flipper Zero": [
+      {
+        "name": "Flipper Zero Firmware Update via qFlipper",
+        "url": "https://flipperzero.one/update"
+      },
+      {
+        "name": "Flipper Zero Community",
+        "url": "https://forum.flipperzero.one/"
+      }
+    ],
+    "Domaine et DNS": [
+      {
+        "name": "urlscan.io",
+        "url": "https://urlscan.io/"
+      },
+      {
+        "name": "DNSDumpster.com - DNS Recon and Research",
+        "url": "https://dnsdumpster.com/"
+      },
+      {
+        "name": "DNS Propagation Checker",
+        "url": "https://www.whatsmydns.net/"
+      },
+      {
+        "name": "OSINT.SH - All in one Information Gathering Tools",
+        "url": "https://osint.sh/"
+      },
+      {
+        "name": "WAF Detection Service",
+        "url": "https://suip.biz/?act=wafw00f"
+      },
+      {
+        "name": "Expired Domains",
+        "url": "https://www.expireddomains.net/"
+      },
+      {
+        "name": "Generate a DKIM Core Key",
+        "url": "https://dkimcore.org/tools/keys.html"
+      },
+      {
+        "name": "Vérifiez la fiabilité d'un site ou d'une adresse mail",
+        "url": "https://fr.scamdoc.com/"
+      },
+      {
+        "name": "Récupération d'informations à partir d'un nom DNS",
+        "url": "https://github.com/Lissy93/web-check"
+      }
+    ],
+    "Icônes et Graphisme": [
+      {
+        "name": "Freepik - Téléchargez des vidéos, vecteurs, photos et PSD gratuits",
+        "url": "https://fr.freepik.com/"
+      },
+      {
+        "name": "Iconfinder - White Hat Icons",
+        "url": "https://www.iconfinder.com/search?q=white+hat&price=premium&style=flat"
+      },
+      {
+        "name": "Icônes gratuites | Icons8",
+        "url": "https://icones8.fr/"
+      }
+    ],
+    "Vulnérabilités (CVE)": [
+      {
+        "name": "CVE Crowd",
+        "url": "https://cvecrowd.com/"
+      },
+      {
+        "name": "CXSECURITY",
+        "url": "https://cxsecurity.com/"
+      }
+    ],
+    "Code": [
+      {
+        "name": "grep.app | Code Search",
+        "url": "https://grep.app/"
+      }
+    ]
+  }
+}
