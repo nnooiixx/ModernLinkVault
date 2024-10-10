@@ -1,6 +1,6 @@
 import { addUrl, getSortedCategories, getUrlsInCategory, moveUrl, deleteUrlByIndex, deleteCategory } from './components/urlList.js';
 import { exportToJson, importFromJson } from './components/importExport.js';
-import { saveToStorage, getFromStorage } from './storage.js'; // Add this line to import the functions
+import { saveToStorage, getFromStorage } from './storage.js'; 
 
 console.log("popup.js is loaded");
 
@@ -9,9 +9,105 @@ type UrlItem = {
   url: string;
 };
 
+type UrlCollection = Record<string, UrlItem[]>;
+
 document.addEventListener('DOMContentLoaded', async () => {
   console.log("Popup script loaded");
 
+  const syncUrlButton = document.getElementById('sync-url-btn');
+  
+  if (syncUrlButton) {
+    syncUrlButton.addEventListener('click', async () => {
+      const syncUrlInput = document.getElementById('sync-url-input') as HTMLInputElement;
+      const syncUrl = syncUrlInput.value.trim();
+
+      if (!syncUrl) {
+        alert("Please enter a valid URL.");
+        return;
+      }
+
+      try {
+        const remoteUrls = await fetchAndValidateUrls(syncUrl);
+        if (remoteUrls) {
+          const localUrls = await getLocalUrls();
+          const mergedUrls = mergeUrls(localUrls, remoteUrls);
+          await saveToStorage('urls', mergedUrls);
+          await renderCategories();
+          alert("URLs synchronized successfully.");
+        }
+      } catch (error) {
+      }
+    });
+  }
+
+  /**
+   * Fetches and validates the remote URLs from the provided URL.
+   * @param url - The URL to fetch the JSON data from.
+   */
+  async function fetchAndValidateUrls(url: string): Promise<UrlCollection | null> {
+    try {
+      const response = await fetch(url);
+      if (!response.ok) throw new Error(`Failed to fetch: ${response.statusText}`);
+      
+      const data: UrlCollection = await response.json();
+      if (!validateUrlData(data)) throw new Error("Invalid URL data format.");
+      return data;
+    } catch (error) {
+      console.error("Error fetching remote URLs:", error);
+      return null;
+    }
+  }
+
+  /**
+   * Validates the structure of the fetched URL data.
+   */
+  function validateUrlData(data: any): data is UrlCollection {
+    return typeof data === 'object' && Object.values(data).every((urls) => Array.isArray(urls));
+  }
+
+  /**
+   * Fetches local URLs from Chrome storage.
+   */
+  async function getLocalUrls(): Promise<UrlCollection> {
+    return new Promise((resolve) => {
+      chrome.storage.local.get('urls', (result) => {
+        const localUrls: UrlCollection = result.urls || {};
+        resolve(localUrls);
+      });
+    });
+  }
+
+  /**
+   * Merges remote URLs with local URLs, avoiding duplicates.
+   * @param localUrls - Local URLs stored in the browser.
+   * @param remoteUrls - URLs fetched from the remote source.
+   */
+  function mergeUrls(localUrls: UrlCollection, remoteUrls: UrlCollection): UrlCollection {
+    const merged = { ...localUrls };
+    
+    for (const [category, urls] of Object.entries(remoteUrls)) {
+      if (!Array.isArray(urls)) continue;  // Skip invalid categories
+      if (!merged[category]) merged[category] = urls;
+      else {
+        const localSet = new Set(merged[category].map(item => item.url));
+        urls.forEach(item => {
+          if (!localSet.has(item.url)) merged[category].push(item);
+        });
+      }
+    }
+    return merged;
+  }
+
+  /**
+   * Saves the merged URLs to Chrome storage.
+   */
+  async function saveToStorage(key: string, data: any): Promise<void> {
+    return new Promise((resolve) => {
+      chrome.storage.local.set({ [key]: data }, resolve);
+    });
+  }
+
+  // Handle full-screen view toggle
   const fullscreenBtn = document.getElementById('fullscreen-btn');
   if (fullscreenBtn) {
     fullscreenBtn.addEventListener('click', () => {
@@ -20,6 +116,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
+  // Settings link toggle
   const settingsLink = document.getElementById('settings-link');
   if (settingsLink) {
     settingsLink.addEventListener('click', () => {
@@ -29,25 +126,24 @@ document.addEventListener('DOMContentLoaded', async () => {
         console.log("Settings section toggled.");
       }
     });
-  } else {
-    console.error("Settings link element not found.");
   }
-  // Function to trigger JSON export
+
+  // Export button functionality
   const exportBtn = document.getElementById('export-btn');
   if (exportBtn) {
     exportBtn.addEventListener('click', async () => {
       try {
-        const urls = await getFromStorage(); // Assuming `getFromStorage()` fetches the stored URLs
+        const urls = await getFromStorage(); 
         const jsonData = JSON.stringify(urls, null, 2);
-        
+
         const blob = new Blob([jsonData], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
-        
+
         const a = document.createElement('a');
         a.href = url;
         a.download = 'urls_export.json';
         a.click();
-        URL.revokeObjectURL(url); // Clean up the URL object
+        URL.revokeObjectURL(url);
 
         console.log("URLs exported as JSON.");
       } catch (error) {
@@ -56,14 +152,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
-  // Function to trigger JSON import
+  // Import button functionality
   const importBtn = document.getElementById('import-btn');
   if (importBtn) {
     importBtn.addEventListener('click', async () => {
       const input = document.createElement('input');
       input.type = 'file';
       input.accept = 'application/json';
-      
+
       input.addEventListener('change', async (event: Event) => {
         const file = (event.target as HTMLInputElement).files?.[0];
         if (file) {
@@ -72,9 +168,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             reader.onload = async (e: ProgressEvent<FileReader>) => {
               const json = e.target?.result as string;
               const importedUrls = JSON.parse(json);
-              
-              await saveToStorage(importedUrls); // Assuming `saveToStorage()` saves the URLs to storage
-              await renderCategories(); // Re-render the updated categories
+
+              await chrome.storage.local.set({ urls: importedUrls });  
+              await renderCategories();
               console.log("URLs imported successfully.");
             };
             reader.readAsText(file);
@@ -84,11 +180,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
       });
 
-      input.click(); // Trigger the file input dialog
+      input.click();
     });
   }
-
-
 
   const addUrlButton = document.getElementById('add-url-btn');
   if (addUrlButton) {
@@ -134,7 +228,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       try {
         await addUrl(urlName, category, url);
-        console.log(`Added URL: ${urlName}, Category: ${category}`);
         await renderCategories();
       } catch (err) {
         console.error("Failed to save URL", err);
@@ -184,22 +277,22 @@ document.addEventListener('DOMContentLoaded', async () => {
               linkDiv.setAttribute('data-index', index.toString());
               linkDiv.setAttribute('data-category', category);
               linkDiv.innerHTML = `
-              <div class="url-item-content">
-                <div class="arrow-container">
-                  <span class="up-arrow" data-index="${index}" data-category="${category}"></span>
-                  <span class="down-arrow" data-index="${index}" data-category="${category}"></span>
+                <div class="url-item-content">
+                  <div class="arrow-container">
+                    <span class="up-arrow" data-index="${index}" data-category="${category}"></span>
+                    <span class="down-arrow" data-index="${index}" data-category="${category}"></span>
+                  </div>
+                  <a href="${url}" target="_blank" class="url-link">${name}</a>
+                  <span class="edit-icon" data-index="${index}" data-category="${category}" style="cursor: pointer;">✏️</span>
+                  <span class="trash-icon" data-index="${index}" data-category="${category}" style="cursor: pointer;">🗑️</span>
                 </div>
-                <a href="${url}" target="_blank" class="url-link">${name}</a>
-                <span class="edit-icon" data-index="${index}" data-category="${category}" style="cursor: pointer;">✏️</span>
-                <span class="trash-icon" data-index="${index}" data-category="${category}" style="cursor: pointer;">🗑️</span>
-              </div>
-              <div class="edit-dropdown hidden" id="edit-form-${category}-${index}">
-                <input type="text" class="edit-url-name" value="${name}" />
-                <input type="url" class="edit-url-link" value="${url}" />
-                <input type="text" class="edit-url-category" value="${category}" />
-                <button class="save-edit" style="background-color: #238636; color: white;">Save</button>
-              </div>
-            `;
+                <div class="edit-dropdown hidden" id="edit-form-${category}-${index}">
+                  <input type="text" class="edit-url-name" value="${name}" />
+                  <input type="url" class="edit-url-link" value="${url}" />
+                  <input type="text" class="edit-url-category" value="${category}" />
+                  <button class="save-edit" style="background-color: #238636; color: white;">Save</button>
+                </div>
+              `;
 
               urlListDiv.appendChild(linkDiv);
 
@@ -212,10 +305,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                 if (confirm('Are you sure you want to delete this URL?')) {
                   await deleteUrlByIndex(category, index);
                   
-                  // After deleting, check if the category is empty
                   const remainingUrls = await getUrlsInCategory(category);
                   if (remainingUrls.length === 0) {
-                    await deleteCategory(category); // Automatically delete the category if it's empty
+                    await deleteCategory(category);
                     console.log(`Deleted empty category: ${category}`);
                   }
 
@@ -244,18 +336,22 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   async function moveUrlUp(category: string, index: number) {
+    const scrollPosition = window.pageYOffset;
     if (index > 0) {
       await moveUrl(category, index, index - 1);
       await renderCategories();
     }
+    window.scrollTo(0, scrollPosition);
   }
 
   async function moveUrlDown(category: string, index: number) {
+    const scrollPosition = window.pageYOffset;
     const urls = await getUrlsInCategory(category);
     if (index < urls.length - 1) {
       await moveUrl(category, index, index + 1);
       await renderCategories();
     }
+    window.scrollTo(0, scrollPosition);
   }
 
   function toggleEditDropdown(category: string, index: number) {
