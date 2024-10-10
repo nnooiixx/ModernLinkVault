@@ -30,39 +30,84 @@ h1 {
 }
 
 .add-btn {
-  background-color: #2ea44f; /* GitHub green */
-  color: white;
-  font-size: 16px; /* Reduced font size to match fullscreen button */
-  border: none;
-  border-radius: 50%; /* Make it fully rounded */
-  width: 35px; /* Same width as fullscreen button */
-  height: 35px; /* Same height as fullscreen button */
+  background-color: #21262d; /* Dark GitHub button background */
+  color: #c9d1d9; /* Light gray text color */
+  font-size: 14px; /* Slightly smaller font size */
+  border: 1px solid rgba(240, 246, 252, 0.1); /* Subtle border */
+  border-radius: 50%; /* Fully rounded */
+  width: 35px; /* Maintain width */
+  height: 35px; /* Maintain height */
   cursor: pointer;
   box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-  transition: background-color 0.2s, box-shadow 0.2s;
-  position: absolute; /* Absolute positioning */
+  transition: background-color 0.2s, box-shadow 0.2s, transform 0.2s;
+  position: fixed; /* Use fixed positioning */
   right: 10px; /* Align to the right */
-  top: 10px; /* Adjust top spacing */
+  top: 10px; /* Stay at the top */
   display: flex; /* Ensure the "+" is centered */
   justify-content: center;
   align-items: center;
+  z-index: 1000; /* Ensure it stays on top of other elements */
 }
 
 .add-btn:hover {
-  background-color: #2c974b; /* Slightly darker green on hover */
+  background-color: #30363d; /* Slightly lighter background on hover */
   box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.2); /* Increase shadow on hover */
-  transform: scale(1.05); /* Slight growth on hover */
+  transform: scale(1.05); /* Slightly grow the button on hover */
 }
 
 .add-btn:active {
-  background-color: #2a8c47;
-  transform: scale(1); /* Return to original size */
+  background-color: #2c333a; /* Darker background when active */
+  transform: scale(1); /* Return to normal size when clicked */
 }
 
-/* Form and button styling */
+
 #url-form {
-  margin-top: 10px;  /* Reduce space between form and other elements */
+  display: flex;
+  flex-direction: column;
+  gap: 8px; /* Slightly smaller gap between elements */
+  padding: 10px; /* Reduce padding inside the form */
+  background-color: #0d1117; /* Dark background */
+  border-radius: 6px;
+  border: 1px solid #30363d; /* Subtle border */
 }
+
+#url-form input {
+  width: 100%; /* Full width for input fields */
+  padding: 6px; /* Reduced padding */
+  background-color: #161b22; /* Slightly lighter background */
+  border: 1px solid #30363d; /* Subtle border */
+  color: #c9d1d9; /* Light gray text */
+  border-radius: 6px; /* Rounded corners */
+  font-size: 12px; /* Smaller font size */
+  line-height: 16px; /* Adjust line height for compactness */
+  box-sizing: border-box; /* Include padding in the element's total width */
+  transition: border-color 0.2s;
+}
+
+#url-form input:focus {
+  background-color: #0d1117; /* Darker background on focus */
+  border-color: #58a6ff; /* Blue border on focus */
+  outline: none; /* Remove default focus outline */
+}
+
+#url-form button#save-url {
+  padding: 6px; /* Smaller padding for the button */
+  background-color: #21262d; /* Dark button background */
+  border: 1px solid rgba(240, 246, 252, 0.1); /* Subtle border */
+  color: #c9d1d9; /* Light gray text */
+  border-radius: 6px;
+  font-size: 12px; /* Smaller font size */
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s, border-color 0.3s;
+  width: 100%; /* Full width button */
+}
+
+#url-form button#save-url:hover {
+  background-color: #30363d; /* Slightly lighter on hover */
+  border-color: rgba(240, 246, 252, 0.2); /* More pronounced border on hover */
+}
+
 
 #url-form.hidden {
   display: none;
@@ -157,13 +202,12 @@ button:hover {
   margin-top: 20px;
 }
 
-/* Fullscreen button at the bottom */
 .fullscreen-btn {
-  background-color: #2ea44f; /* GitHub green */
-  color: white;
-  font-size: 16px;
-  border: none;
-  border-radius: 50%; /* Round shape */
+  background-color: #21262d; /* Dark GitHub button background */
+  color: #c9d1d9; /* Light gray text */
+  font-size: 14px; /* Slightly smaller font size */
+  border: 1px solid rgba(240, 246, 252, 0.1); /* Subtle border */
+  border-radius: 50%; /* Fully rounded */
   width: 36px;
   height: 36px;
   cursor: pointer;
@@ -171,22 +215,24 @@ button:hover {
   justify-content: center;
   align-items: center;
   box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-  transition: background-color 0.2s, box-shadow 0.2s;
-  position: absolute; /* Make the button position absolute */
+  transition: background-color 0.2s, box-shadow 0.2s, transform 0.2s;
+  position: fixed; /* Fixed positioning to keep it in place on scroll */
   right: 10px; /* Align to the right */
   bottom: 10px; /* Stick to the bottom */
+  z-index: 1000; /* Make sure it's above other content */
 }
 
 .fullscreen-btn:hover {
-  background-color: #2c974b; /* Darker green for hover */
+  background-color: #30363d; /* Slightly lighter on hover */
   box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.2); /* Deeper shadow on hover */
   transform: scale(1.05); /* Slight grow on hover */
 }
 
 .fullscreen-btn:active {
-  background-color: #2a8c47; /* Darker green for active state */
+  background-color: #2c333a; /* Darker background for active state */
   transform: scale(1); /* Return to original size on click */
 }
+
 
 /* Styling for the settings link */
 .settings-text {
@@ -198,7 +244,6 @@ button:hover {
   bottom: 10px;
   left: 20px;
   padding: 10px;
-  background-color: #010409; /* Background color for the square */
   border-radius: 0px 10px 0px 10px; /* Rounded top-right and bottom-left corners */
 }
 
@@ -318,7 +363,7 @@ button:hover {
 .edit-dropdown {
   margin-top: 10px; /* Space above the dropdown */
   background-color: #161b22; /* Dark background for the dropdown */
-  border: 1px solid #238636; /* Green border to match the Save button */
+  border: 1px solid #262b33; /* Green border to match the Save button */
   border-radius: 6px; /* Rounded corners */
   padding: 10px; /* Padding inside the dropdown */
   display: flex;
@@ -329,31 +374,57 @@ button:hover {
   display: none; /* Hide the dropdown when the class 'hidden' is present */
 }
 
+/* Edit URL Fields */
 .edit-dropdown input {
-  margin-bottom: 10px; /* Space between the input fields */
-  padding: 1px; /* Slightly reduced padding */
-  border-radius: 6px;
-  border: 1px solid #c9d1d9;
-  background-color: #0d1117;
-  color: #c9d1d9;
-  font-size: 14px; /* Reduced font size */
+  width: 100%;              /* Full width for input fields */
+  padding: 6px;             /* Reduced padding to match the create URL form */
+  background-color: #161b22; /* Slightly lighter background for input fields */
+  border: 1px solid #30363d; /* Subtle border for inputs */
+  color: #c9d1d9;           /* Light gray text */
+  border-radius: 6px;       /* Rounded corners */
+  font-size: 12px;          /* Reduced font size to match the create URL form */
+  line-height: 16px;        /* Adjust line height for compactness */
+  box-sizing: border-box;   /* Include padding in the element's total width */
+  margin-bottom: 8px;       /* Space between fields */
+  transition: border-color 0.2s;
 }
 
 .edit-dropdown button.save-edit {
-  padding: 8px;
-  border-radius: 6px;
-  border: none;
-  background-color: #238636; /* Save button in green */
-  color: white;
+  padding: 6px;              /* Reduce padding for the save button */
+  border-radius: 6px;        /* Rounded corners */
+  border: 1px solid rgba(240, 246, 252, 0.1); /* Subtle border */
+  background-color: #21262d; /* Dark GitHub-style button background */
+  color: #c9d1d9;            /* Light gray text */
   cursor: pointer;
-  font-weight: bold;
-  transition: background-color 0.3s;
+  font-size: 12px;           /* Smaller font size to match input fields */
+  font-weight: 600;          /* Bold text */
+  transition: background-color 0.2s, border-color 0.2s;
+  width: 100%;               /* Full width button */
 }
 
-/* Darken green on hover */
 .edit-dropdown button.save-edit:hover {
-  background-color: #113f1a; /* Darker green for hover state */
+  background-color: #30363d; /* Slightly lighter on hover */
+  border-color: rgba(240, 246, 252, 0.2); /* More visible border on hover */
 }
+
+/* Save button inside the edit dropdown */
+.edit-dropdown button.save-edit {
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid rgba(240, 246, 252, 0.1); /* Subtle border */
+  background-color: #21262d !important; /* Ensure this background color is applied */
+  color: #c9d1d9 !important; /* Light gray text with !important */
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s, border-color 0.3s;
+}
+
+/* Darken button and border on hover */
+.edit-dropdown button.save-edit:hover {
+  background-color: #30363d !important; /* Darker background on hover */
+  border-color: rgba(240, 246, 252, 0.2) !important; /* More pronounced border on hover */
+}
+
 
 /* Styling for pencil (edit) icon */
 .edit-icon {
@@ -425,36 +496,95 @@ input[type="url"]:focus {
 
 
 button {
-  padding: 5px 10px;  /* Smaller padding */
-  background-color: #238636;
-  border: 1px solid rgba(27,31,36,0.15);
-  color: #ffffff;
+  padding: 5px 10px;  /* Same padding */
+  background-color: #21262d; /* Dark button background like GitHub dark mode */
+  border: 1px solid rgba(240, 246, 252, 0.1); /* Subtle border */
+  color: #c9d1d9; /* Light gray text */
   border-radius: 6px;
   font-size: 12px;  /* Smaller font size */
   font-weight: 600;
-  line-height: 18px;  /* Reduced line height */
+  line-height: 18px;  /* Consistent with smaller button */
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: background-color 0.2s, border-color 0.2s;
 }
 
 button:hover {
-  background-color: #2ea043;
+  background-color: #30363d; /* Slightly lighter background on hover */
+  border-color: rgba(240, 246, 252, 0.2); /* More pronounced border on hover */
 }
 
+
 button#save-url {
-  padding: 5px 12px;  /* Smaller padding */
-  background-color: #238636;
-  border: 1px solid rgba(27,31,36,0.15);
-  color: #ffffff;
+  padding: 5px 12px;
+  background-color: #21262d; /* Dark GitHub button background */
+  border: 1px solid rgba(240, 246, 252, 0.1); /* Subtle border */
+  color: #c9d1d9; /* Light gray text color used in GitHub dark theme */
   border-radius: 6px;
-  font-size: 14px;  /* Smaller font size */
+  font-size: 14px;
   font-weight: 600;
   line-height: 20px;
   cursor: pointer;
-  transition: background-color 0.2s;
-  width: auto; /* Reduce the button width */
+  transition: background-color 0.2s, border-color 0.2s;
+  width: auto;
 }
 
 button#save-url:hover {
-  background-color: #2ea043;
+  background-color: #30363d; /* Slightly lighter on hover */
+  border-color: rgba(240, 246, 252, 0.2); /* Lighter border on hover */
+}
+
+
+.sync-container {
+  display: flex;           /* Align items horizontally */
+  gap: 10px;               /* Add space between input and button */
+  align-items: center;     /* Align vertically in the center */
+  width: 100%;             /* Ensure the container takes up the full width */
+  margin-bottom: 25px;     /* Add 25px of space below the container */
+}
+
+#sync-url-input {
+  flex: 3;                 /* Make the input field take up 3 times more space than the button */
+  padding: 5px;
+  background-color: #0d1117; /* Background similar to GitHub Dark mode */
+  border: 1px solid #30363d; /* Subtle border color */
+  color: #c9d1d9;           /* Light gray text color */
+  border-radius: 6px;
+}
+
+#sync-url-btn {
+  flex: 1;                 /* Make the button take up less space */
+  padding: 5px 12px;
+  background-color: #21262d;
+  border: 1px solid rgba(240, 246, 252, 0.1);
+  color: #c9d1d9;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
+  cursor: pointer;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+#sync-url-btn:hover {
+  background-color: #30363d;  /* Darker on hover */
+  border-color: rgba(240, 246, 252, 0.2);
+}
+
+.edit-dropdown input.edit-url-name,
+.edit-dropdown input.edit-url-link,
+.edit-dropdown input.edit-url-category {
+  width: 100%;             /* Make input fields take up full width */
+  padding: 8px;            /* Adjust padding for better spacing */
+  background-color: #161b22; /* Background for the input fields to match GitHub Dark */
+  border: 1px solid #30363d; /* Subtle border to match dark theme */
+  color: #c9d1d9;          /* Light gray text */
+  border-radius: 6px;       /* Rounded corners */
+  box-sizing: border-box;   /* Ensure padding is included in width */
+  margin-bottom: 10px;      /* Add some space between fields */
+}
+
+.edit-dropdown input:focus {
+  background-color: #0d1117; /* Darker background on focus */
+  border-color: #58a6ff;     /* Blue border on focus */
+  outline: none;             /* Remove default focus outline */
 }
