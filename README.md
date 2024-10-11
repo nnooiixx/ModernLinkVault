@@ -1,9 +1,9 @@
 
-# URL Saver
+# ModernLinkVault 
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 
-**URL Saver** est une application simple et efficace qui vous permet de sauvegarder, organiser et gérer vos liens URL préférés en un seul endroit. Que ce soit pour des articles, des vidéos ou des ressources, URL Saver facilite l'accès à toutes vos URL importantes.
+**ModernLinkVault** est une application simple et efficace qui vous permet de sauvegarder, organiser et gérer vos liens URL préférés en un seul endroit. Que ce soit pour des articles, des vidéos ou des ressources, URL Saver facilite l'accès à toutes vos URL importantes.
 
 ## Table des matières
 
@@ -32,7 +32,7 @@
 
 ## Installation
 
-Pour installer **URL Saver** sur votre machine, suivez les étapes ci-dessous :
+Pour installer **ModernLinkVault** sur votre machine, suivez les étapes ci-dessous :
 
 1. Clonez le repository :
    ```bash
