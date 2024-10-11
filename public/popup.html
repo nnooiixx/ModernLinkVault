@@ -3,29 +3,29 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gestionnaire d'URLs</title>
+  <title>ModernLinkVault</title>
   <link rel="stylesheet" href="../src/assets/styles.css">
 </head>
 <body>
   <div id="app">
     <!-- Header Section -->
     <header class="header">
-      <h1>Gestionnaire d'URLs</h1>
+      <h1>ModernLinkVault</h1>
       <!-- Button to show/hide URL form -->
-      <button id="add-url-btn" class="add-btn" aria-label="Ajouter une nouvelle URL">+</button>
+      <button id="add-url-btn" class="add-btn" aria-label="Add a new URL">+</button>
     </header>
 
     <!-- Search Input -->
     <div id="search-container">
-      <input type="text" id="search-input" placeholder="Rechercher URLs ou Catégories..." aria-label="Rechercher">
+      <input type="text" id="search-input" placeholder="Search URLs or Categories..." aria-label="Search">
     </div>
 
     <!-- URL Form (Initially Hidden) -->
     <div id="url-form" class="hidden">
-      <input type="text" id="url-name" placeholder="Nom de l'URL" required aria-label="Nom de l'URL" />
-      <input type="url" id="url-link" placeholder="URL complète" required aria-label="URL complète" />
-      <input type="text" id="url-category" placeholder="Catégorie" required aria-label="Catégorie" />
-      <button id="save-url" aria-label="Sauvegarder l'URL">Sauvegarder</button>
+      <input type="text" id="url-name" placeholder="Name" required aria-label="Name" />
+      <input type="url" id="url-link" placeholder="URL" required aria-label="URL" />
+      <input type="text" id="url-category" placeholder="Category" required aria-label="Category" />
+      <button id="save-url" aria-label="Save">Save</button>
     </div>
 
     <!-- Category and URL List -->
@@ -33,19 +33,19 @@
     <div class="separator"></div>
    
     <!-- Fullscreen Button -->
-    <button id="fullscreen-btn" class="fullscreen-btn" aria-label="Ouvrir en plein écran">&#x2197;</button>
+    <button id="fullscreen-btn" class="fullscreen-btn" aria-label="Open full screen">&#x2197;</button>
 
     <!-- Settings Link -->
-    <a id="settings-link" href="#" class="settings-text">Paramètres</a>
+    <a id="settings-link" href="#" class="settings-text">Parameters</a>
 
     <!-- Settings Section (Initially Hidden) -->
     <div id="settings-section" class="hidden">
-      <button id="export-btn" aria-label="Exporter les données JSON">Exporter JSON</button>
-      <button id="import-btn" aria-label="Importer les données JSON">Importer JSON</button>
+      <button id="export-btn" aria-label="Export JSON data">Export JSON</button>
+      <button id="import-btn" aria-label="Import JSON data">Import JSON</button>
       <div id="url-sync-section" class="hidden">
         <div class="sync-container">
-          <input type="text" id="sync-url-input" placeholder="URL du fichier JSON" aria-label="URL du fichier JSON">
-          <button id="sync-url-btn" aria-label="Synchroniser les URLs">Synchronise</button>
+          <input type="text" id="sync-url-input" placeholder="JSON file URL" aria-label="JSON file URL">
+          <button id="sync-url-btn" aria-label="Synchronize URLs">Synchronise</button>
         </div>
       </div>      
     </div>
